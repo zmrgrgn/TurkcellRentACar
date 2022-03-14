@@ -46,18 +46,6 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 	}
 
 	@Override
-	public DataResult<List<ListAdditionalServiceDto>> getAllByRentalId(int rentalId) {
-		
-		List<AdditionalService> result = this.additionalServiceDao.getAllByRentalId(rentalId);
-
-		List<ListAdditionalServiceDto> response = result.stream().map(
-				rentalService -> this.modelMapperService.forDto().map(rentalService, ListAdditionalServiceDto.class))
-				.collect(Collectors.toList());
-
-		return new SuccessDataResult<List<ListAdditionalServiceDto>>(response);
-	}
-
-	@Override
 	public Result add(CreateAdditionalServiceRequest createAdditionalServiceRequest) throws BusinessException {
 		
 		AdditionalService additionalService = this.modelMapperService.forRequest().map(createAdditionalServiceRequest,

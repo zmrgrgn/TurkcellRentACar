@@ -23,20 +23,39 @@ import lombok.NoArgsConstructor;
 @Table(name="rentals")
 @Entity
 public class Rental {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
 	private int id;
+	
 	@Column(name="rent_date")
 	private LocalDate rentDate;
+	
 	@Column(name="return_date")
 	private LocalDate returnDate;
+	
+	@Column(name="total_price")
+	private int totalPrice;
+	
 	@ManyToOne
 	@JoinColumn(name = "car_id")
 	private Car car;
+	
 	@ManyToOne
-	@JoinColumn(name = "customer_id")
-	private Customer customer;
+	@JoinColumn(name = "user_id")
+	private User user;
+	
 	@OneToMany
-	private List<AdditionalService> additionalServices;
+	private List<OrderedAdditionalService> orderedAdditionalServices;
+	
+	@ManyToOne
+	@JoinColumn(name = "rent_city_id")
+	private City rentCity;
+	
+	@ManyToOne
+	@JoinColumn(name = "return_city_id")
+	private City returnCity;
+	
+
 }

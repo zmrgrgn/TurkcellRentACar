@@ -20,4 +20,7 @@ public class UpdateRentalRequest {
 	private LocalDate returnDate;
 	@Positive
 	private int carId;
+	private int userId;
+	private int rentCityId;
+	private int returnCityId;
 }

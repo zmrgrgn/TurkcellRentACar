@@ -11,5 +11,4 @@ public class GetAdditionalServiceDto {
 	private int id;
 	private String name;
 	private int dailyPrice;
-	private int rentalId;
 }

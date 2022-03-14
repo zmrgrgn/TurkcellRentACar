@@ -37,10 +37,6 @@ public class AdditionalServiceController {
 	public DataResult<List<ListAdditionalServiceDto>> getAll(){
 		return this.additionalServiceService.getAll();
 	}
-	@GetMapping("/getrentalid")
-	DataResult<List<ListAdditionalServiceDto>> getAllByRentalId(@RequestParam("rentalId")int rentalId){
-		return this.additionalServiceService.getAllByRentalId(rentalId);
-	}
 	@PostMapping("/add")
 	Result add(@RequestBody @Valid CreateAdditionalServiceRequest createAdditionalServiceRequest) throws BusinessException{
 		return this.additionalServiceService.add(createAdditionalServiceRequest);

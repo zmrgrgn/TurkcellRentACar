@@ -109,24 +109,20 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 	
 	private void checkCarMaintenance(int carId) throws BusinessException {
 		List<CarMaintenance> carMaintenances=this.carMaintenanceDao.getAllByCarId(carId);
-		if(!carMaintenances.isEmpty()) {
 			for (CarMaintenance carMaintenance : carMaintenances) {
 				if(carMaintenance.getReturnDate()==null) {
 					 throw new BusinessException("Araba bakımda, bakıma verilemez.");
 				}
 			}
-		}
 	}
 	
 	private void checkRentalCar(int carId) throws BusinessException {
 		List<Rental> rentals=this.rentalDao.getAllByCarId(carId);
-		if(!rentals.isEmpty()) {
 			for (Rental rental : rentals) {
 				if(rental.getReturnDate()==null) {
 					 throw new BusinessException("Araba kirada, bakıma verilemez.");
 				}
 			}
-		}
 	}
 
 }

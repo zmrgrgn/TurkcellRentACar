@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Data
 @Table(name = "car_maintenances")
 public class CarMaintenance {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "id")

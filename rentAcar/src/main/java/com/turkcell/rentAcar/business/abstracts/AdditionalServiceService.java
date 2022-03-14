@@ -14,8 +14,6 @@ import com.turkcell.rentAcar.core.results.Result;
 public interface AdditionalServiceService {
 	
 	DataResult<List<ListAdditionalServiceDto>> getAll();
-	
-	DataResult<List<ListAdditionalServiceDto>> getAllByRentalId(int rentalId);
 
 	Result add(CreateAdditionalServiceRequest createAdditionalServiceRequest) throws BusinessException;
 
