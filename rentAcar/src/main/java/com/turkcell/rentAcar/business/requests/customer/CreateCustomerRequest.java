@@ -1,4 +1,4 @@
-package com.turkcell.rentAcar.business.requests.corporatecustomer;
+package com.turkcell.rentAcar.business.requests.customer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UpdateCorporateCustomerRequest {
+public class CreateCustomerRequest {
 	private String email;
 	private String password;
-	private String name;
-	private int taxNumber;
-
 }

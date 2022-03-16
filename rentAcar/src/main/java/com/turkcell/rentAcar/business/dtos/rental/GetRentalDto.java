@@ -16,9 +16,9 @@ public class GetRentalDto {
 	private int id;
 	private LocalDate rentDate;
 	private LocalDate returnDate;
-	private int totalPrice;
+	private double additionalPrice;
+    private int customerId;
 	private int carId;
-	private int userId;
 	private GetCityDto rentCity;
 	private GetCityDto returnCity;
 }

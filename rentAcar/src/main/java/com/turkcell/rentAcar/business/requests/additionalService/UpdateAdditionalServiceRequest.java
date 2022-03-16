@@ -12,5 +12,5 @@ public class UpdateAdditionalServiceRequest {
 	@NotNull
 	private int id;
 	private String name;
-	private int dailyPrice;
+	private double dailyPrice;
 }

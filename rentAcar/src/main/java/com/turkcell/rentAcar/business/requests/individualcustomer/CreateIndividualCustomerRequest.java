@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateIndividualCustomerRequest {
-	
-	private String mail;
+	private String email;
 	private String password;
 	private String firstName;
 	private String lastName;
+	private int identityNumber;
 }

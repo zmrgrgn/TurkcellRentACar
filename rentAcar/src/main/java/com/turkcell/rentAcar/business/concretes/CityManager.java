@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.CityService;
-import com.turkcell.rentAcar.business.dtos.car.GetCarDto;
-import com.turkcell.rentAcar.business.dtos.car.ListCarDto;
 import com.turkcell.rentAcar.business.dtos.city.GetCityDto;
 import com.turkcell.rentAcar.business.dtos.city.ListCityDto;
 import com.turkcell.rentAcar.business.requests.city.CreateCityRequest;
@@ -22,7 +20,6 @@ import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
 import com.turkcell.rentAcar.core.utilities.mapping.ModelMapperService;
 import com.turkcell.rentAcar.dataAccess.abstracts.CityDao;
-import com.turkcell.rentAcar.entities.concretes.Car;
 import com.turkcell.rentAcar.entities.concretes.City;
 
 @Service

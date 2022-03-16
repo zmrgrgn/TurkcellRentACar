@@ -10,7 +10,6 @@ import com.turkcell.rentAcar.business.abstracts.CorporateCustomerService;
 import com.turkcell.rentAcar.business.dtos.corporatecustomer.GetCorporateCustomerDto;
 import com.turkcell.rentAcar.business.dtos.corporatecustomer.ListCorporateCustomerDto;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.CreateCorporateCustomerRequest;
-import com.turkcell.rentAcar.business.requests.corporatecustomer.DeleteCorporateCustomerRequest;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.UpdateCorporateCustomerRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
@@ -27,46 +26,41 @@ public class CorporateCustomerManager implements CorporateCustomerService{
 	
 	private ModelMapperService modelMapperService;
 	private CorporateCustomerDao corporateCustomerDao;
+	
 	@Autowired
 	public CorporateCustomerManager(ModelMapperService modelMapperService, CorporateCustomerDao corporateCustomerDao) {
-		super();
 		this.modelMapperService = modelMapperService;
 		this.corporateCustomerDao = corporateCustomerDao;
 	}
 
 	@Override
 	public DataResult<List<ListCorporateCustomerDto>> getAll() {
+		
 		var result = this.corporateCustomerDao.findAll();
 		List<ListCorporateCustomerDto> response = result.stream()
 				.map(corporatecustomer -> this.modelMapperService.forDto().map(corporatecustomer, ListCorporateCustomerDto.class)).collect(Collectors.toList());
+		
 		return new SuccessDataResult<List<ListCorporateCustomerDto>>(response);
 	}
 
 	@Override
 	public Result add(CreateCorporateCustomerRequest createCorporateCustomerRequest) throws BusinessException {
+		
 		CorporateCustomer corporateCustomer = this.modelMapperService.forRequest().map(createCorporateCustomerRequest, CorporateCustomer.class);
 		this.corporateCustomerDao.save(corporateCustomer);
+		
 		return new SuccessResult("corporateCustomer.Added");
 	}
 
 	@Override
-	public DataResult<GetCorporateCustomerDto> getById(int corporateCustomerId) throws BusinessException {
-		var result = this.corporateCustomerDao.getById(corporateCustomerId);
+	public DataResult<GetCorporateCustomerDto> getById(int id) throws BusinessException {
+		var result = this.corporateCustomerDao.getById(id);
 		if (result != null) {
 			GetCorporateCustomerDto response = this.modelMapperService.forDto().map(result, GetCorporateCustomerDto.class);
 			return new SuccessDataResult<GetCorporateCustomerDto>(response);
 		}
+		
 		throw new BusinessException("Böyle bir id bulunmamaktadır.");
-	}
-
-	@Override
-	public Result delete(DeleteCorporateCustomerRequest deleteCorporateCustomerRequest) throws BusinessException {
-		CorporateCustomer corporateCustomer = this.modelMapperService.forRequest().map(deleteCorporateCustomerRequest, CorporateCustomer.class);
-		if (checkCorporateCustomerIdExist(corporateCustomer)) {
-			this.corporateCustomerDao.deleteById(corporateCustomer.getId());
-			return new SuccessResult("corporateCustomer.Deleted");
-		}
-		return new ErrorResult("corporateCustomer.NotFound");
 	}
 
 	@Override
@@ -81,8 +75,8 @@ public class CorporateCustomerManager implements CorporateCustomerService{
 	
 	private boolean checkCorporateCustomerIdExist(CorporateCustomer corporateCustomer) {
 
-		return this.corporateCustomerDao.getById(corporateCustomer.getId()) != null;
+		return this.corporateCustomerDao.getById(corporateCustomer.getCustomerId()) != null;
 
 	}
-
+	
 }

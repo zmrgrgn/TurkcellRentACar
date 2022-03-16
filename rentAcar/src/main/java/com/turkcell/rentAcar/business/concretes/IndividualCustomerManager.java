@@ -10,7 +10,6 @@ import com.turkcell.rentAcar.business.abstracts.IndividualCustomerService;
 import com.turkcell.rentAcar.business.dtos.individualcustomer.GetIndividualCustomerDto;
 import com.turkcell.rentAcar.business.dtos.individualcustomer.ListIndividualCustomerDto;
 import com.turkcell.rentAcar.business.requests.individualcustomer.CreateIndividualCustomerRequest;
-import com.turkcell.rentAcar.business.requests.individualcustomer.DeleteIndividualCustomerRequest;
 import com.turkcell.rentAcar.business.requests.individualcustomer.UpdateIndividualCustomerRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
@@ -27,18 +26,20 @@ public class IndividualCustomerManager implements IndividualCustomerService{
 	
 	private ModelMapperService modelMapperService;
 	private IndividualCustomerDao individualCustomerDao;
+	
 	@Autowired
 	public IndividualCustomerManager(ModelMapperService modelMapperService, IndividualCustomerDao individualCustomerDao) {
-		super();
 		this.modelMapperService = modelMapperService;
 		this.individualCustomerDao = individualCustomerDao;
 	}
 
 	@Override
 	public DataResult<List<ListIndividualCustomerDto>> getAll() {
+		
 		var result = this.individualCustomerDao.findAll();
 		List<ListIndividualCustomerDto> response = result.stream()
 				.map(individualcustomer -> this.modelMapperService.forDto().map(individualcustomer, ListIndividualCustomerDto.class)).collect(Collectors.toList());
+		
 		return new SuccessDataResult<List<ListIndividualCustomerDto>>(response);
 	}
 
@@ -50,23 +51,13 @@ public class IndividualCustomerManager implements IndividualCustomerService{
 	}
 
 	@Override
-	public DataResult<GetIndividualCustomerDto> getById(int individualCustomerId) throws BusinessException {
-		var result = this.individualCustomerDao.getById(individualCustomerId);
+	public DataResult<GetIndividualCustomerDto> getById(int id) throws BusinessException {
+		var result = this.individualCustomerDao.getById(id);
 		if (result != null) {
 			GetIndividualCustomerDto response = this.modelMapperService.forDto().map(result, GetIndividualCustomerDto.class);
 			return new SuccessDataResult<GetIndividualCustomerDto>(response);
 		}
 		throw new BusinessException("Böyle bir id bulunmamaktadır.");
-	}
-
-	@Override
-	public Result delete(DeleteIndividualCustomerRequest deleteIndividualCustomerRequest) throws BusinessException {
-		IndividualCustomer individualCustomer = this.modelMapperService.forRequest().map(deleteIndividualCustomerRequest, IndividualCustomer.class);
-		if (checkIndividualCustomerIdExist(individualCustomer)) {
-			this.individualCustomerDao.deleteById(individualCustomer.getId());
-			return new SuccessResult("individualCustomer.Deleted");
-		}
-		return new ErrorResult("individualCustomer.NotFound");
 	}
 
 	@Override
@@ -78,9 +69,10 @@ public class IndividualCustomerManager implements IndividualCustomerService{
 		}
 		return new ErrorResult("individualCustomer.NotFound");
 	}
+	
 	private boolean checkIndividualCustomerIdExist(IndividualCustomer individualCustomer) {
 
-		return this.individualCustomerDao.getById(individualCustomer.getId()) != null;
+		return this.individualCustomerDao.getById(individualCustomer.getCustomerId()) != null;
 
 	}
 

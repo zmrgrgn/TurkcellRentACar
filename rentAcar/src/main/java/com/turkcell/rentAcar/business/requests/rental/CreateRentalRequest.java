@@ -13,10 +13,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateRentalRequest {
 	private LocalDate rentDate;
-	private LocalDate returnDate;
+    private int customerId;
 	@NotNull
 	private int carId;
-	private int userId;
 	private int rentCityId;
 	private int returnCityId;
 }

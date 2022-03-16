@@ -1,4 +1,4 @@
-package com.turkcell.rentAcar.business.requests.individualcustomer;
+package com.turkcell.rentAcar.business.dtos.customer;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class DeleteIndividualCustomerRequest {
-	
+public class GetCustomerDto {
 	private int id;
+	private String email;
+	private String password;
 }

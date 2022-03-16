@@ -35,16 +35,16 @@ public class Rental {
 	@Column(name="return_date")
 	private LocalDate returnDate;
 	
-	@Column(name="total_price")
-	private int totalPrice;
+    @Column(name = "additional_price")
+    private double additionalPrice = 0;
 	
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer; 
+    
 	@ManyToOne
 	@JoinColumn(name = "car_id")
 	private Car car;
-	
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
 	
 	@OneToMany
 	private List<OrderedAdditionalService> orderedAdditionalServices;

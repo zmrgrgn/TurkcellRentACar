@@ -5,7 +5,6 @@ import java.util.List;
 import com.turkcell.rentAcar.business.dtos.corporatecustomer.GetCorporateCustomerDto;
 import com.turkcell.rentAcar.business.dtos.corporatecustomer.ListCorporateCustomerDto;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.CreateCorporateCustomerRequest;
-import com.turkcell.rentAcar.business.requests.corporatecustomer.DeleteCorporateCustomerRequest;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.UpdateCorporateCustomerRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
@@ -17,9 +16,7 @@ public interface CorporateCustomerService {
 
 	Result add(CreateCorporateCustomerRequest createCorporateCustomerRequest) throws BusinessException;
 
-	DataResult<GetCorporateCustomerDto> getById(int corporateCustomerId) throws BusinessException;
-
-	Result delete(DeleteCorporateCustomerRequest deleteCorporateCustomerRequest) throws BusinessException;
+	DataResult<GetCorporateCustomerDto> getById(int id) throws BusinessException;
 
 	Result update(UpdateCorporateCustomerRequest updateCorporateCustomerRequest) throws BusinessException;
 
