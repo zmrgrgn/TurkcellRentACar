@@ -10,8 +10,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.CarService;
+import com.turkcell.rentAcar.business.abstracts.RentalService;
 import com.turkcell.rentAcar.business.dtos.car.GetCarDto;
 import com.turkcell.rentAcar.business.dtos.car.ListCarDto;
+import com.turkcell.rentAcar.business.dtos.rental.ListRentalDto;
 import com.turkcell.rentAcar.business.requests.car.CreateCarRequest;
 import com.turkcell.rentAcar.business.requests.car.DeleteCarRequest;
 import com.turkcell.rentAcar.business.requests.car.UpdateCarRequest;
@@ -24,6 +26,7 @@ import com.turkcell.rentAcar.core.results.SuccessResult;
 import com.turkcell.rentAcar.core.utilities.mapping.ModelMapperService;
 import com.turkcell.rentAcar.dataAccess.abstracts.CarDao;
 import com.turkcell.rentAcar.entities.concretes.Car;
+import com.turkcell.rentAcar.entities.concretes.Rental;
 
 @Service
 public class CarManager implements CarService {
@@ -81,7 +84,7 @@ public class CarManager implements CarService {
 	}
 
 	@Override
-	public Result update(UpdateCarRequest updateCarRequest) {
+	public Result update(UpdateCarRequest updateCarRequest) throws BusinessException {
 		
 		Car car=this.modelMapperService.forRequest().map(updateCarRequest, Car.class);
 		if(checkCarIdExist(car)) {

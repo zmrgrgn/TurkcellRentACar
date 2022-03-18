@@ -20,7 +20,7 @@ public interface CarService {
 
 	Result delete(DeleteCarRequest deleteCarRequest);
 
-	Result update(UpdateCarRequest updateCarRequest);
+	Result update(UpdateCarRequest updateCarRequest) throws BusinessException;
 
 	DataResult<List<ListCarDto>> getAllPaged(int pageNo, int pageSize);
 

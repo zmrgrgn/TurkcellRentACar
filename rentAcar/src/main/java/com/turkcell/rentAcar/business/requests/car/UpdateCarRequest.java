@@ -19,7 +19,6 @@ public class UpdateCarRequest {
 	@Positive
 	private int modelYear;
 	private String description;
-	private int km;
 	@Positive
 	private int brandId;
 	@Positive

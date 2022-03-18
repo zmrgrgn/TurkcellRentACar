@@ -89,7 +89,6 @@ public class InvoiceManager implements InvoiceService{
 	public Result update(UpdateInvoiceRequest updateInvoiceRequest) {
 		Invoice invoice = this.modelMapperService.forRequest().map(updateInvoiceRequest, Invoice.class);
 		if(checkInvoiceIdExist(invoice)) {
-			updateOperation(invoice,updateInvoiceRequest);
 			this.invoiceDao.save(invoice);
 			return new SuccessResult("invoice.Updated");
 		}
@@ -118,9 +117,5 @@ public class InvoiceManager implements InvoiceService{
 
 	}
 	
-	private void updateOperation(Invoice invoice, UpdateInvoiceRequest updateInvoiceRequest) {
-		invoice.setCreateDate(updateInvoiceRequest.getCreateDate());
-		
-	}
 
 }

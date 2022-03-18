@@ -16,8 +16,12 @@ public class UpdateRentalRequest {
 	@NotNull
 	@Positive
 	private int id;
+	private LocalDate rentDate;
 	private LocalDate returnDate;
 	private int returnKm;
-	@Positive
+    private int customerId;
+	@NotNull
 	private int carId;
+	private int rentCityId;
+	private int returnCityId;
 }
