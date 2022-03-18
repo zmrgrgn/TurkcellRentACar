@@ -14,13 +14,13 @@ import com.turkcell.rentAcar.core.results.Result;
 public interface CarService {
 	DataResult<List<ListCarDto>> getAll();
 
-	Result add(CreateCarRequest createCarRequest) throws BusinessException;
+	Result add(CreateCarRequest createCarRequest) ;
 
 	DataResult<GetCarDto> getById(int carId) throws BusinessException;
 
-	Result delete(DeleteCarRequest deleteCarRequest) throws BusinessException;
+	Result delete(DeleteCarRequest deleteCarRequest);
 
-	Result update(UpdateCarRequest updateCarRequest) throws BusinessException;
+	Result update(UpdateCarRequest updateCarRequest);
 
 	DataResult<List<ListCarDto>> getAllPaged(int pageNo, int pageSize);
 

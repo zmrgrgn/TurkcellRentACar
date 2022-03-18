@@ -38,18 +38,15 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 	public DataResult<List<ListAdditionalServiceDto>> getAll() {
 		
 		var result = this.additionalServiceDao.findAll();
-		List<ListAdditionalServiceDto> response = result.stream().map(
-				additionalService -> this.modelMapperService.forDto().map(additionalService, ListAdditionalServiceDto.class))
-				.collect(Collectors.toList());
+		List<ListAdditionalServiceDto> response = result.stream().map(additionalService -> this.modelMapperService.forDto().map(additionalService, ListAdditionalServiceDto.class)).collect(Collectors.toList());
 		
 		return new SuccessDataResult<List<ListAdditionalServiceDto>>(response);
 	}
 
 	@Override
-	public Result add(CreateAdditionalServiceRequest createAdditionalServiceRequest) throws BusinessException {
+	public Result add(CreateAdditionalServiceRequest createAdditionalServiceRequest) {
 		
-		AdditionalService additionalService = this.modelMapperService.forRequest().map(createAdditionalServiceRequest,
-				AdditionalService.class);
+		AdditionalService additionalService = this.modelMapperService.forRequest().map(createAdditionalServiceRequest,AdditionalService.class);
 		this.additionalServiceDao.save(additionalService);
 		
 		return new SuccessResult("additionalService.Added");
@@ -68,10 +65,9 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 	}
 
 	@Override
-	public Result delete(DeleteAdditionalServiceRequest deleteAdditionalServiceRequest) throws BusinessException {
+	public Result delete(DeleteAdditionalServiceRequest deleteAdditionalServiceRequest) {
 		
-		AdditionalService additionalService = this.modelMapperService.forRequest().map(deleteAdditionalServiceRequest,
-				AdditionalService.class);
+		AdditionalService additionalService = this.modelMapperService.forRequest().map(deleteAdditionalServiceRequest,AdditionalService.class);
 		if (checkAdditionalServiceIdExist(additionalService)) {
 			this.additionalServiceDao.deleteById(additionalService.getId());
 			return new SuccessResult("additionalService.Deleted");
@@ -81,10 +77,9 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 	}
 
 	@Override
-	public Result update(UpdateAdditionalServiceRequest updateAdditionalServiceRequest) throws BusinessException {
+	public Result update(UpdateAdditionalServiceRequest updateAdditionalServiceRequest){
 		
-		AdditionalService additionalService = this.modelMapperService.forRequest().map(updateAdditionalServiceRequest,
-				AdditionalService.class);
+		AdditionalService additionalService = this.modelMapperService.forRequest().map(updateAdditionalServiceRequest,AdditionalService.class);
 		if (checkAdditionalServiceIdExist(additionalService)) {
 			this.additionalServiceDao.save(additionalService);
 			return new SuccessResult("additionalService.Updated");

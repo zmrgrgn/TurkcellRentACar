@@ -1,7 +1,6 @@
 package com.turkcell.rentAcar.entities.concretes;
 
 import java.time.LocalDate;
-import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -21,14 +19,20 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name="rentals")
 @Entity
-public class Rental {
+@Table(name="invoices")
+public class Invoice {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name="id")
 	private int id;
+	
+	@Column(name="invoice_no")
+	private long invoiceNo;
+	
+	@Column(name="create_date")
+	private LocalDate createDate;
 	
 	@Column(name="rent_date")
 	private LocalDate rentDate;
@@ -36,35 +40,18 @@ public class Rental {
 	@Column(name="return_date")
 	private LocalDate returnDate;
 	
-    @Column(name = "additional_price")
-    private double additionalPrice = 0;
-    
-    @Column(name = "rent_km")
-    private int rentKm;
-    
-    @Column(name = "return_km")
-    private int returnKm;
+	@Column(name="total_day")
+	private int totalDay;
+	
+	@Column(name="rent_total_price")
+	private double rentTotalPrice;
 	
     @ManyToOne
     @JoinColumn(name = "customer_id")
     private Customer customer; 
     
-	@ManyToOne
-	@JoinColumn(name = "car_id")
-	private Car car;
+    @OneToOne
+    @JoinColumn(name = "rental_id")
+    private Rental rental; 
 	
-	@OneToMany
-	private List<OrderedAdditionalService> orderedAdditionalServices;
-	
-	@ManyToOne
-	@JoinColumn(name = "rent_city_id")
-	private City rentCity;
-	
-	@ManyToOne
-	@JoinColumn(name = "return_city_id")
-	private City returnCity;
-	
-	@OneToOne(mappedBy = "rental")
-	private Invoice invoice;
-
 }

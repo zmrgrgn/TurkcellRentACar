@@ -7,11 +7,11 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.turkcell.rentAcar.business.abstracts.AdditionalServiceService;
 import com.turkcell.rentAcar.business.abstracts.CarService;
-import com.turkcell.rentAcar.business.abstracts.OrderedAdditionalServiceService;
+import com.turkcell.rentAcar.business.abstracts.CustomerService;
 import com.turkcell.rentAcar.business.abstracts.RentalService;
-import com.turkcell.rentAcar.business.dtos.orderedadditionalservice.ListOrderedAdditionalServiceDto;
+import com.turkcell.rentAcar.business.dtos.car.GetCarDto;
+import com.turkcell.rentAcar.business.dtos.customer.GetCustomerDto;
 import com.turkcell.rentAcar.business.dtos.rental.GetRentalDto;
 import com.turkcell.rentAcar.business.dtos.rental.ListRentalDto;
 import com.turkcell.rentAcar.business.requests.rental.CreateRentalRequest;
@@ -27,6 +27,7 @@ import com.turkcell.rentAcar.core.utilities.mapping.ModelMapperService;
 import com.turkcell.rentAcar.dataAccess.abstracts.CarMaintenanceDao;
 import com.turkcell.rentAcar.dataAccess.abstracts.RentalDao;
 import com.turkcell.rentAcar.entities.concretes.CarMaintenance;
+import com.turkcell.rentAcar.entities.concretes.Customer;
 import com.turkcell.rentAcar.entities.concretes.Rental;
 
 @Service
@@ -34,19 +35,17 @@ public class RentalManager implements RentalService {
 	private RentalDao rentalDao;
 	private ModelMapperService modelMapperService;
 	private CarMaintenanceDao carMaintenanceDao;
-	private AdditionalServiceService additionalServiceService;
-	private OrderedAdditionalServiceService orderedAdditionalServiceService;
 	private CarService carService;
+	private CustomerService customerService;
 
 	@Autowired
-	public RentalManager(RentalDao rentalDao, ModelMapperService modelMapperService, CarMaintenanceDao carMaintenanceDao, AdditionalServiceService additionalServiceService, OrderedAdditionalServiceService orderedAdditionalServiceService, CarService carService) {
+	public RentalManager(RentalDao rentalDao, ModelMapperService modelMapperService, CarMaintenanceDao carMaintenanceDao, CarService carService,CustomerService customerService) {
 		super();
 		this.rentalDao = rentalDao;
 		this.modelMapperService = modelMapperService;
 		this.carMaintenanceDao = carMaintenanceDao;
-		this.additionalServiceService=additionalServiceService;
-		this.orderedAdditionalServiceService=orderedAdditionalServiceService;
 		this.carService=carService;
+		this.customerService=customerService;
 	}
 
 	@Override
@@ -80,7 +79,10 @@ public class RentalManager implements RentalService {
 		checkCarMaintenance(createRentalRequest.getCarId());
 		
 		Rental rental = this.modelMapperService.forRequest().map(createRentalRequest, Rental.class);
+		rental.setAdditionalPrice(totalPriceCalculator(rental));
+		rental.setCustomer(customerCorrection(createRentalRequest.getCustomerId()));
 		
+		rental.setRentKm(this.carService.getById(createRentalRequest.getCarId()).getData().getKm());
 
 		this.rentalDao.save(rental);
 		
@@ -119,7 +121,11 @@ public class RentalManager implements RentalService {
 		
 		Rental rental = this.modelMapperService.forRequest().map(updateRentalRequest, Rental.class);
 		if (checkRentalIdExist(rental)) {
-			rental.setAdditionalPrice(rentalCalculation(rental));
+			
+			rental.getCar().setKm(updateRentalRequest.getReturnKm());
+			
+			updateOperation(rental, updateRentalRequest);
+			rental.setAdditionalPrice(totalPriceCalculator(rental));
 			this.rentalDao.save(rental);
 			return new SuccessResult("Rental.Updated");
 		}
@@ -152,28 +158,39 @@ public class RentalManager implements RentalService {
 		}
 	}
 	
-	private double rentalCalculation(Rental rental) throws BusinessException {
+	private double totalPriceCalculator(Rental rentalCar) throws BusinessException{
 		
-		double totalPrice = 0;
+		GetCarDto car = this.carService.getById(rentalCar.getCar().getId()).getData();
 		
-		List<ListOrderedAdditionalServiceDto> orderedAdditionalServiceDtos = orderedAdditionalServiceService.getAllByRentalId(rental.getId()).getData();
-		
-		if(orderedAdditionalServiceDtos.size() > 0) {
-			for(ListOrderedAdditionalServiceDto orderedAdditionalServiceDto : orderedAdditionalServiceDtos) {
-				totalPrice += additionalServiceService.getById(orderedAdditionalServiceDto.getAdditionalServiceId()).getData().getPrice(); 
-			}	
+		long dateBetween = ChronoUnit.DAYS.between(rentalCar.getRentDate(), rentalCar.getReturnDate());
+		if(dateBetween==0) {
+			dateBetween=1;
 		}
 		
-		if(rental.getRentCity().getId() != rental.getReturnCity().getId())
-			totalPrice += 750;
-
-		long days = ChronoUnit.DAYS.between(rental.getRentDate(), rental.getReturnDate());
+		double rentPrice=car.getDailyPrice();
+		double totalPrice=rentPrice*dateBetween;
+ 
+        if(rentalCar.getRentCity().getId()!=rentalCar.getReturnCity().getId()) {
+        	totalPrice=totalPrice+750;
+        }
+        
+    		return totalPrice;
+    
+	}
+	
+	private void updateOperation(Rental rental, UpdateRentalRequest updateRentalRequest) {
 		
-		if(days == 0)
-			days = 1;
+		rental.setReturnDate(updateRentalRequest.getReturnDate());
+		rental.setReturnKm(updateRentalRequest.getReturnKm());	
+	}
+	
+	private Customer customerCorrection(int customerId) throws BusinessException{
 		
-		totalPrice += days * carService.getById(rental.getCar().getId()).getData().getDailyPrice();
-
-		return totalPrice;
+		GetCustomerDto getCustomerDto = this.customerService.getById(customerId).getData();
+		
+		Customer customer = this.modelMapperService.forDto().map(getCustomerDto, Customer.class);
+		
+		return customer;
+		
 	}
 }

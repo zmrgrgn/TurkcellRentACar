@@ -18,7 +18,7 @@ public interface BrandService {
 
 	DataResult<GetBrandDto> getById(int brandId) throws BusinessException;
 
-	Result delete(DeleteBrandRequest deleteBrandRequest) throws BusinessException;
+	Result delete(DeleteBrandRequest deleteBrandRequest);
 
-	Result update(UpdateBrandRequest updateBrandRequest) throws BusinessException;
+	Result update(UpdateBrandRequest updateBrandRequest);
 }

@@ -12,6 +12,7 @@ public class GetCarDto {
 	private int dailyPrice;
 	private int modelYear;
 	private String description;
+	private int km;
 	private String brandName;
 	private String colorName;
 }

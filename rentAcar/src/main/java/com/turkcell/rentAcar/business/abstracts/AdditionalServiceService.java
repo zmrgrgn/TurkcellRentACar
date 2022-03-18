@@ -15,12 +15,12 @@ public interface AdditionalServiceService {
 	
 	DataResult<List<ListAdditionalServiceDto>> getAll();
 
-	Result add(CreateAdditionalServiceRequest createAdditionalServiceRequest) throws BusinessException;
+	Result add(CreateAdditionalServiceRequest createAdditionalServiceRequest);
 
 	DataResult<GetAdditionalServiceDto> getById(int additionalServiceId) throws BusinessException;
 
-	Result delete(DeleteAdditionalServiceRequest deleteAdditionalServiceRequest) throws BusinessException;
+	Result delete(DeleteAdditionalServiceRequest deleteAdditionalServiceRequest);
 
-	Result update(UpdateAdditionalServiceRequest updateAdditionalServiceRequest) throws BusinessException;
+	Result update(UpdateAdditionalServiceRequest updateAdditionalServiceRequest);
 
 }
