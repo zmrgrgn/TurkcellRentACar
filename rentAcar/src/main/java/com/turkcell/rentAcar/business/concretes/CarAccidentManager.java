@@ -49,7 +49,7 @@ public class CarAccidentManager implements CarAccidentService {
 
 	@Override
 	public Result add(CreateCarAccidentRequest createCarAccidentRequest) {
-		checkIfCarAccidentExistByCarId(createCarAccidentRequest.getCarId());
+		checkIfCarAccidentExistByCarId(createCarAccidentRequest.getCarId());//checkifcarexits
 		
 		CarAccident carAccident = this.modelMapperService.forRequest().map(createCarAccidentRequest, CarAccident.class);
 		
@@ -89,7 +89,7 @@ public class CarAccidentManager implements CarAccidentService {
 		CarAccident result = this.carAccidentDao.getById(id);
 		if (result == null) {
 		
-			return new ErrorDataResult<GetCarAccidentDto>("Böyle bir id bulunamadı.");
+			return new ErrorDataResult<GetCarAccidentDto>("Böyle bir id bulunamadı.");//business exceptiona çevir
 		}
 		
 		GetCarAccidentDto response = this.modelMapperService.forDto().map(result, GetCarAccidentDto.class);
