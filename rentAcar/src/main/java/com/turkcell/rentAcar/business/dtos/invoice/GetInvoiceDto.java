@@ -21,7 +21,7 @@ public class GetInvoiceDto {
 
 	private LocalDate returnDate;
 
-	private int totalDay;
+	private long totalDay;
 
 	private double rentTotalPrice;
 

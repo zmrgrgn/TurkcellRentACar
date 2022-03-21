@@ -1,5 +1,7 @@
 package com.turkcell.rentAcar.business.abstracts;
 
+import com.turkcell.rentAcar.core.results.Result;
+
 public interface FakeIsBankPosService {
-	public void fakeIsBankService(String fullName, String cardNo, int Cvv);
+	public Result fakeIsBankService(String fullName, String cardNo, int Cvv);
 }

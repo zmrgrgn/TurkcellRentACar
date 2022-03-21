@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.turkcell.rentAcar.business.abstracts.CustomerService;
 import com.turkcell.rentAcar.business.abstracts.InvoiceService;
 import com.turkcell.rentAcar.business.abstracts.RentalService;
-import com.turkcell.rentAcar.business.dtos.customer.GetCustomerDto;
 import com.turkcell.rentAcar.business.dtos.invoice.GetInvoiceDto;
 import com.turkcell.rentAcar.business.dtos.invoice.ListInvoiceDto;
 import com.turkcell.rentAcar.business.requests.invoice.CreateInvoiceRequest;
@@ -25,7 +24,6 @@ import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
 import com.turkcell.rentAcar.core.utilities.mapping.ModelMapperService;
 import com.turkcell.rentAcar.dataAccess.abstracts.InvoiceDao;
-import com.turkcell.rentAcar.entities.concretes.Customer;
 import com.turkcell.rentAcar.entities.concretes.Invoice;
 
 @Service
@@ -50,7 +48,6 @@ public class InvoiceManager implements InvoiceService{
 		var result = this.invoiceDao.findAll();
 		
 		List<ListInvoiceDto> response = result.stream().map(invoice -> this.modelMapperService.forDto().map(invoice, ListInvoiceDto.class)).collect(Collectors.toList());
-		response=toSetReturnDateForGetAllMethod(result,response);
 		return new SuccessDataResult<List<ListInvoiceDto>>(response);
 	}
 
@@ -169,19 +166,7 @@ public class InvoiceManager implements InvoiceService{
 		invoice.setReturnDate(rental.getReturnDate());
 		invoice.setTotalDay(ChronoUnit.DAYS.between(rental.getRentDate(),rental.getReturnDate())+1);
 		invoice.setRentTotalPrice(rental.getTotalPrice());
-
-		GetCustomerDto getCustomerDto=this.customerService.getById(invoice.getCustomer().getCustomerId()).getData();
-		Customer customer=this.modelMapperService.forDto().map(getCustomerDto, Customer.class);
-		
-		invoice.setCustomer(customer);
 		
 		return invoice;
-	}
-	private List<ListInvoiceDto> toSetReturnDateForGetAllMethod(List<Invoice> result, List<ListInvoiceDto> response){
-		for(int i=0 ; i<response.size() ; i++) {
-			response.get(i).setRentDate(result.get(i).getReturnDate());
-			response.get(i).setRentalId(result.get(i).getRental().getId());
-		}
-		return response;
 	}
 }

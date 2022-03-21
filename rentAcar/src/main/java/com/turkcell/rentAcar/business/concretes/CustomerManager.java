@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.CustomerService;
 import com.turkcell.rentAcar.business.dtos.customer.GetCustomerDto;
+import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
@@ -31,8 +32,17 @@ public class CustomerManager implements CustomerService{
 			return new ErrorDataResult<GetCustomerDto>("Böyle bir id bulunamadı.");
 		}
 		GetCustomerDto response = this.modelMapperService.forDto().map(result, GetCustomerDto.class);
-		
+		checkIfEmail(response.getEmail());
 		return new SuccessDataResult<GetCustomerDto>(response, "Success");
 	}
-
+	
+	private boolean checkIfEmail(String email) {
+		
+		if (this.customerDao.getCustomerByEmail(email) == null) {
+		
+			return true;
+		}
+		
+		throw new BusinessException("Aynı email bulunmaktadır.");
+	}
 }

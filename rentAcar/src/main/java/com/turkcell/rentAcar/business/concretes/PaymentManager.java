@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.turkcell.rentAcar.business.abstracts.PaymentService;
 import com.turkcell.rentAcar.business.abstracts.PosService;
 import com.turkcell.rentAcar.business.requests.payment.CreatePaymentRequest;
+import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessResult;
 import com.turkcell.rentAcar.core.utilities.mapping.ModelMapperService;
@@ -33,14 +34,26 @@ public class PaymentManager implements PaymentService{
 	
 		Payment payment = this.modelMapperService.forRequest().map(createPaymentRequest, Payment.class);
 		
+		checkIfOrderedAdditionalServiceId(createPaymentRequest.getOrderedAdditionalServiceId());
+		
 		this.paymentDao.save(payment);
 		
-		return new SuccessResult("Ödeme başarılı..");
+		return new SuccessResult("Ödeme başarılı.");
 		
 	}
 	
 	private void toSendPosService(CreatePaymentRequest createPaymentRequest) {
 		this.posService.payment(createPaymentRequest);
+	}
+	
+	private boolean checkIfOrderedAdditionalServiceId(int orderedAdditionalServiceId) {
+		
+		if (this.paymentDao.getPaymentByOrderedAdditionalServiceId(orderedAdditionalServiceId) == null) {
+		
+			return true;
+		}
+		
+		throw new BusinessException("Bu kiralamanın ödemesi yapılmıştır.");
 	}
 
 }

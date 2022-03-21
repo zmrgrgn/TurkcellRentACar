@@ -1,7 +1,8 @@
 package com.turkcell.rentAcar.business.abstracts;
 
 import com.turkcell.rentAcar.business.requests.payment.CreatePaymentRequest;
+import com.turkcell.rentAcar.core.results.Result;
 
 public interface PosService {
-	public void payment(CreatePaymentRequest createPaymentRequest);
+	public Result payment(CreatePaymentRequest createPaymentRequest);
 }
