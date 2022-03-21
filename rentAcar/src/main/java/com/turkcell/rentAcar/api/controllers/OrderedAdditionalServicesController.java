@@ -20,7 +20,6 @@ import com.turkcell.rentAcar.business.dtos.orderedadditionalservice.ListOrderedA
 import com.turkcell.rentAcar.business.requests.orderedadditionalservice.CreateOrderedAdditionalServiceRequest;
 import com.turkcell.rentAcar.business.requests.orderedadditionalservice.DeleteOrderedAdditionalServiceRequest;
 import com.turkcell.rentAcar.business.requests.orderedadditionalservice.UpdateOrderedAdditionalServiceRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 @RestController
@@ -40,19 +39,19 @@ public class OrderedAdditionalServicesController {
 		return this.orderedAdditionalServiceService.getAll();
 	}
 	@PostMapping("/add")
-	public Result add(@RequestBody @Valid CreateOrderedAdditionalServiceRequest createOrderedAdditionalServiceRequest) throws BusinessException{
+	public Result add(@RequestBody @Valid CreateOrderedAdditionalServiceRequest createOrderedAdditionalServiceRequest){
 		return this.orderedAdditionalServiceService.add(createOrderedAdditionalServiceRequest);
 	}
 	@GetMapping("/getid")
-	public DataResult<GetOrderedAdditionalServiceDto> getById(@RequestParam("orderedAdditionalServiceId")int orderedAdditionalServiceId) throws BusinessException{
+	public DataResult<GetOrderedAdditionalServiceDto> getById(@RequestParam("orderedAdditionalServiceId")int orderedAdditionalServiceId){
 		return this.orderedAdditionalServiceService.getById(orderedAdditionalServiceId);
 	}
 	@DeleteMapping("/delete")
-	public Result delete(@RequestBody @Valid DeleteOrderedAdditionalServiceRequest deleteOrderedAdditionalServiceRequest) throws BusinessException{
+	public Result delete(@RequestBody @Valid DeleteOrderedAdditionalServiceRequest deleteOrderedAdditionalServiceRequest){
 		return this.orderedAdditionalServiceService.delete(deleteOrderedAdditionalServiceRequest);
 	}
 	@PutMapping("/update")
-	public Result update(@RequestBody @Valid UpdateOrderedAdditionalServiceRequest updateOrderedAdditionalServiceRequest) throws BusinessException{
+	public Result update(@RequestBody @Valid UpdateOrderedAdditionalServiceRequest updateOrderedAdditionalServiceRequest){
 		return this.orderedAdditionalServiceService.update(updateOrderedAdditionalServiceRequest);
 	}
 	@GetMapping("/getrentalid")

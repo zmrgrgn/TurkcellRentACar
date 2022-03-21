@@ -13,7 +13,7 @@ import com.turkcell.rentAcar.business.requests.individualcustomer.CreateIndividu
 import com.turkcell.rentAcar.business.requests.individualcustomer.UpdateIndividualCustomerRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorResult;
+import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -37,43 +37,50 @@ public class IndividualCustomerManager implements IndividualCustomerService{
 	public DataResult<List<ListIndividualCustomerDto>> getAll() {
 		
 		var result = this.individualCustomerDao.findAll();
-		List<ListIndividualCustomerDto> response = result.stream()
-				.map(individualcustomer -> this.modelMapperService.forDto().map(individualcustomer, ListIndividualCustomerDto.class)).collect(Collectors.toList());
+		List<ListIndividualCustomerDto> response = result.stream().map(individualcustomer -> this.modelMapperService.forDto().map(individualcustomer, ListIndividualCustomerDto.class)).collect(Collectors.toList());
 		
 		return new SuccessDataResult<List<ListIndividualCustomerDto>>(response);
 	}
 
 	@Override
-	public Result add(CreateIndividualCustomerRequest createIndividualCustomerRequest) throws BusinessException {
+	public Result add(CreateIndividualCustomerRequest createIndividualCustomerRequest){
+		
 		IndividualCustomer individualCustomer = this.modelMapperService.forRequest().map(createIndividualCustomerRequest, IndividualCustomer.class);
+		
 		this.individualCustomerDao.save(individualCustomer);
 		return new SuccessResult("individualCustomer.Added");
 	}
 
 	@Override
-	public DataResult<GetIndividualCustomerDto> getById(int id) throws BusinessException {
-		var result = this.individualCustomerDao.getById(id);
-		if (result != null) {
-			GetIndividualCustomerDto response = this.modelMapperService.forDto().map(result, GetIndividualCustomerDto.class);
-			return new SuccessDataResult<GetIndividualCustomerDto>(response);
+	public DataResult<GetIndividualCustomerDto> getById(int id){
+		
+		IndividualCustomer result = this.individualCustomerDao.getById(id);
+		
+		if (result == null) {
+	
+			return new ErrorDataResult<GetIndividualCustomerDto>("Böyle bir id bulunamadı.");
 		}
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		GetIndividualCustomerDto response = this.modelMapperService.forDto().map(result, GetIndividualCustomerDto.class);
+		return new SuccessDataResult<GetIndividualCustomerDto>(response);
 	}
 
 	@Override
-	public Result update(UpdateIndividualCustomerRequest updateIndividualCustomerRequest) throws BusinessException {
+	public Result update(UpdateIndividualCustomerRequest updateIndividualCustomerRequest){
+		
 		IndividualCustomer individualCustomer = this.modelMapperService.forRequest().map(updateIndividualCustomerRequest, IndividualCustomer.class);		
-		if(checkIndividualCustomerIdExist(individualCustomer)) {
-			this.individualCustomerDao.save(individualCustomer);
-			return new SuccessResult("individualCustomer.Updated");
-		}
-		return new ErrorResult("individualCustomer.NotFound");
+		
+		checkIndividualCustomerIdExist(individualCustomer);
+		
+		this.individualCustomerDao.save(individualCustomer);
+		return new SuccessResult("individualCustomer.Updated");
+
 	}
 	
 	private boolean checkIndividualCustomerIdExist(IndividualCustomer individualCustomer) {
-
-		return this.individualCustomerDao.getById(individualCustomer.getCustomerId()) != null;
-
+		if(this.individualCustomerDao.getById(individualCustomer.getCustomerId()) != null) {
+			return true;
+		}
+		throw new BusinessException("Böyle bir id bulunmamaktadır.");
 	}
 
 }

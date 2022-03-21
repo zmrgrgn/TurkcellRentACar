@@ -2,6 +2,7 @@ package com.turkcell.rentAcar.business.requests.brand;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,5 +16,6 @@ public class UpdateBrandRequest {
 	@Positive
 	private int id;
 	@NotNull
+	@Size(min=2, max=50)
 	private String name;
 }

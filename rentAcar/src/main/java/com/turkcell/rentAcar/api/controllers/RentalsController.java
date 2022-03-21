@@ -20,7 +20,6 @@ import com.turkcell.rentAcar.business.dtos.rental.ListRentalDto;
 import com.turkcell.rentAcar.business.requests.rental.CreateRentalRequest;
 import com.turkcell.rentAcar.business.requests.rental.DeleteRentalRequest;
 import com.turkcell.rentAcar.business.requests.rental.UpdateRentalRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
@@ -45,22 +44,22 @@ public class RentalsController {
 	}
 
 	@PostMapping("/add")
-	public Result add(@RequestBody @Valid CreateRentalRequest createRentalRequest) throws BusinessException{
+	public Result add(@RequestBody @Valid CreateRentalRequest createRentalRequest){
 		return rentalService.add(createRentalRequest);
 	}
 
 	@GetMapping("/getid")
-	public DataResult<GetRentalDto> getById(@RequestParam("rentalId") int rentalId) throws BusinessException{
+	public DataResult<GetRentalDto> getById(@RequestParam("rentalId") int rentalId){
 		return rentalService.getById(rentalId);
 	}
 	
 	@DeleteMapping("/delete")
-	public Result delete(@RequestBody @Valid DeleteRentalRequest deleteRentalRequest) throws BusinessException{
+	public Result delete(@RequestBody @Valid DeleteRentalRequest deleteRentalRequest){
 		return rentalService.delete(deleteRentalRequest);
 	}
 	
 	@PutMapping("/update")
-	public Result update(@RequestBody @Valid UpdateRentalRequest updateRentalRequest) throws BusinessException{
-		return rentalService.update(updateRentalRequest);
+	public Result update(@RequestParam("id") int id,@RequestBody @Valid UpdateRentalRequest updateRentalRequest){
+		return rentalService.update(id, updateRentalRequest);
 	}
 }

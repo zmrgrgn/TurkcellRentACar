@@ -6,7 +6,6 @@ import com.turkcell.rentAcar.business.dtos.corporatecustomer.GetCorporateCustome
 import com.turkcell.rentAcar.business.dtos.corporatecustomer.ListCorporateCustomerDto;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.CreateCorporateCustomerRequest;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.UpdateCorporateCustomerRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
@@ -14,10 +13,10 @@ public interface CorporateCustomerService {
 	
 	DataResult<List<ListCorporateCustomerDto>> getAll();
 
-	Result add(CreateCorporateCustomerRequest createCorporateCustomerRequest) throws BusinessException;
+	Result add(CreateCorporateCustomerRequest createCorporateCustomerRequest);
 
-	DataResult<GetCorporateCustomerDto> getById(int id) throws BusinessException;
+	DataResult<GetCorporateCustomerDto> getById(int id);
 
-	Result update(UpdateCorporateCustomerRequest updateCorporateCustomerRequest) throws BusinessException;
+	Result update(UpdateCorporateCustomerRequest updateCorporateCustomerRequest);
 
 }

@@ -1,7 +1,5 @@
 package com.turkcell.rentAcar.business.requests.carMaintenance;
 
-import java.time.LocalDate;
-
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -16,8 +14,8 @@ public class UpdateCarMaintenanceRequest {
 	@NotNull
 	@Positive
 	private int id;
+	@NotNull
 	private String description;
-	private LocalDate returnDate;
-	@Positive
+	@NotNull
 	private int carId;
 }

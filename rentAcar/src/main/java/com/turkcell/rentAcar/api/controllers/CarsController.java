@@ -20,7 +20,6 @@ import com.turkcell.rentAcar.business.dtos.car.ListCarDto;
 import com.turkcell.rentAcar.business.requests.car.CreateCarRequest;
 import com.turkcell.rentAcar.business.requests.car.DeleteCarRequest;
 import com.turkcell.rentAcar.business.requests.car.UpdateCarRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
@@ -38,19 +37,19 @@ public class CarsController {
 		 return this.carService.getAll();
 	 }
 	@PostMapping("add")
-	 public Result add(@RequestBody @Valid CreateCarRequest createCarRequest) throws BusinessException {
+	 public Result add(@RequestBody @Valid CreateCarRequest createCarRequest){
 		return this.carService.add(createCarRequest);
 	 }
 	@GetMapping("/getid")
-	public DataResult<GetCarDto> getById(@RequestParam("carId") int carId) throws BusinessException {
+	public DataResult<GetCarDto> getById(@RequestParam("carId") int carId){
 		return this.carService.getById(carId);
 	}
 	@DeleteMapping("/delete")
-	public Result delete(@RequestBody @Valid DeleteCarRequest deleteCarRequest) throws BusinessException{
+	public Result delete(@RequestBody @Valid DeleteCarRequest deleteCarRequest){
 		return this.carService.delete(deleteCarRequest);
 	}
 	@PutMapping("/update")
-	public Result update(@RequestBody @Valid UpdateCarRequest updateCarRequest)throws BusinessException{
+	public Result update(@RequestBody @Valid UpdateCarRequest updateCarRequest){
 		return this.carService.update(updateCarRequest);
 	}
 	@GetMapping("/getallPaged")

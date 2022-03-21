@@ -20,16 +20,15 @@ import com.turkcell.rentAcar.business.dtos.additionalService.ListAdditionalServi
 import com.turkcell.rentAcar.business.requests.additionalService.CreateAdditionalServiceRequest;
 import com.turkcell.rentAcar.business.requests.additionalService.DeleteAdditionalServiceRequest;
 import com.turkcell.rentAcar.business.requests.additionalService.UpdateAdditionalServiceRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
 @RestController
 @RequestMapping("/api/additionalservices")
-public class AdditionalServiceController {
+public class AdditionalServicesController {
 	private AdditionalServiceService additionalServiceService;
 	@Autowired
-	public AdditionalServiceController(AdditionalServiceService additionalServiceService) {
+	public AdditionalServicesController(AdditionalServiceService additionalServiceService) {
 		super();
 		this.additionalServiceService = additionalServiceService;
 	}
@@ -38,19 +37,19 @@ public class AdditionalServiceController {
 		return this.additionalServiceService.getAll();
 	}
 	@PostMapping("/add")
-	Result add(@RequestBody @Valid CreateAdditionalServiceRequest createAdditionalServiceRequest) throws BusinessException{
+	Result add(@RequestBody @Valid CreateAdditionalServiceRequest createAdditionalServiceRequest){
 		return this.additionalServiceService.add(createAdditionalServiceRequest);
 	}
 	@GetMapping("/getid")
-	DataResult<GetAdditionalServiceDto> getById(@RequestParam("additionalServiceId")int additionalServiceId) throws BusinessException{
+	DataResult<GetAdditionalServiceDto> getById(@RequestParam("additionalServiceId")int additionalServiceId) {
 		return this.additionalServiceService.getById(additionalServiceId);
 	}
 	@DeleteMapping("/delete")
-	Result delete(@RequestBody @Valid DeleteAdditionalServiceRequest deleteAdditionalServiceRequest) throws BusinessException{
+	Result delete(@RequestBody @Valid DeleteAdditionalServiceRequest deleteAdditionalServiceRequest){
 		return this.additionalServiceService.delete(deleteAdditionalServiceRequest);
 	}
 	@PutMapping("/update")
-	Result update(@RequestBody @Valid UpdateAdditionalServiceRequest updateAdditionalServiceRequest) throws BusinessException{
+	Result update(@RequestBody @Valid UpdateAdditionalServiceRequest updateAdditionalServiceRequest){
 		return this.additionalServiceService.update(updateAdditionalServiceRequest);
 	}
 	

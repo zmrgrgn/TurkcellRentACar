@@ -1,5 +1,6 @@
 package com.turkcell.rentAcar.dataAccess.abstracts;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,4 +12,5 @@ import com.turkcell.rentAcar.entities.concretes.CarMaintenance;
 public interface CarMaintenanceDao extends JpaRepository<CarMaintenance, Integer>{
 	CarMaintenance getCarMaintenanceById(int carMaintenanceId);
 	List<CarMaintenance> getAllByCarId (int id);
+	CarMaintenance getByReturnDateAndCar_id(LocalDate returnDate, int carId);
 }

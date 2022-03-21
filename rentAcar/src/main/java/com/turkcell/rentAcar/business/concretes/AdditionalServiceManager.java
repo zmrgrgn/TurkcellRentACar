@@ -14,7 +14,7 @@ import com.turkcell.rentAcar.business.requests.additionalService.DeleteAdditiona
 import com.turkcell.rentAcar.business.requests.additionalService.UpdateAdditionalServiceRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorResult;
+import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -29,7 +29,6 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 	
 	@Autowired
 	public AdditionalServiceManager(ModelMapperService modelMapperService, AdditionalServiceDao additionalServiceDao) {
-		super();
 		this.modelMapperService = modelMapperService;
 		this.additionalServiceDao = additionalServiceDao;
 	}
@@ -53,43 +52,52 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 	}
 
 	@Override
-	public DataResult<GetAdditionalServiceDto> getById(int additionalServiceId) throws BusinessException {
+	public DataResult<GetAdditionalServiceDto> getById(int additionalServiceId){
 		
-		var result = this.additionalServiceDao.getAdditionalServiceById(additionalServiceId);
-		if (result != null) {
-			GetAdditionalServiceDto response = this.modelMapperService.forDto().map(result, GetAdditionalServiceDto.class);
-			return new SuccessDataResult<GetAdditionalServiceDto>(response);
+		AdditionalService result = this.additionalServiceDao.getAdditionalServiceById(additionalServiceId);
+		
+		if (result == null) {
+			return new ErrorDataResult<GetAdditionalServiceDto>("Böyle bir id bulunamadı.");
 		}
 		
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		GetAdditionalServiceDto response = this.modelMapperService.forDto().map(result, GetAdditionalServiceDto.class);
+		return new SuccessDataResult<GetAdditionalServiceDto>(response);
 	}
 
 	@Override
 	public Result delete(DeleteAdditionalServiceRequest deleteAdditionalServiceRequest) {
 		
 		AdditionalService additionalService = this.modelMapperService.forRequest().map(deleteAdditionalServiceRequest,AdditionalService.class);
-		if (checkAdditionalServiceIdExist(additionalService)) {
-			this.additionalServiceDao.deleteById(additionalService.getId());
-			return new SuccessResult("additionalService.Deleted");
-		}
-		
-		return new ErrorResult("additionalService.NotFound");
+
+		checkAdditionalServiceIdExist(additionalService);
+
+		this.additionalServiceDao.deleteById(additionalService.getId());
+
+		return new SuccessResult("additionalService.Deleted");
+
 	}
 
 	@Override
 	public Result update(UpdateAdditionalServiceRequest updateAdditionalServiceRequest){
 		
 		AdditionalService additionalService = this.modelMapperService.forRequest().map(updateAdditionalServiceRequest,AdditionalService.class);
-		if (checkAdditionalServiceIdExist(additionalService)) {
-			this.additionalServiceDao.save(additionalService);
-			return new SuccessResult("additionalService.Updated");
-		}
+			
+		checkAdditionalServiceIdExist(additionalService);
 		
-		return new ErrorResult("additionalService.NotFound");
+		this.additionalServiceDao.save(additionalService);
+		
+		return new SuccessResult("additionalService.Updated");
+
 	}
+	
 	private boolean checkAdditionalServiceIdExist(AdditionalService additionalService) {
 		
-		return this.additionalServiceDao.getAdditionalServiceById(additionalService.getId()) != null;
+		if(this.additionalServiceDao.getAdditionalServiceById(additionalService.getId()) != null) {
+			
+			return true;
+		}
+		
+		throw new BusinessException("Böyle bir id bulunmamaktadır.");
 	}
 
 }

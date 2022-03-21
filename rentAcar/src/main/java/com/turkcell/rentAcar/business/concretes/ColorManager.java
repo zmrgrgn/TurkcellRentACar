@@ -14,7 +14,7 @@ import com.turkcell.rentAcar.business.requests.color.DeleteColorRequest;
 import com.turkcell.rentAcar.business.requests.color.UpdateColorRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorResult;
+import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -30,72 +30,81 @@ public class ColorManager implements ColorService {
 
 	@Autowired
 	public ColorManager(ColorDao colorDao, ModelMapperService modelMapperService) {
-		super();
 		this.colorDao = colorDao;
 		this.modelMapperService = modelMapperService;
 	}
 
 	@Override
 	public DataResult<List<ListColorDto>> getAll() {
+		
 		var result = this.colorDao.findAll();
-		List<ListColorDto> response = result.stream()
-				.map(color -> this.modelMapperService.forDto().map(color, ListColorDto.class))
-				.collect(Collectors.toList());
+		List<ListColorDto> response = result.stream().map(color -> this.modelMapperService.forDto().map(color, ListColorDto.class)).collect(Collectors.toList());
+		
 		return new SuccessDataResult<List<ListColorDto>>(response);
 	}
 
 	@Override
-	public Result add(CreateColorRequest createColorRequest) throws BusinessException {
+	public Result add(CreateColorRequest createColorRequest){
+		
 		Color color = this.modelMapperService.forRequest().map(createColorRequest, Color.class);
-		if (checkIfColorName(createColorRequest)) {
-			this.colorDao.save(color);
-			return new SuccessResult("Color.Added");
-		}
-		return new ErrorResult("Color.NotFound");
+		
+		checkIfColorName(createColorRequest);
+		
+		this.colorDao.save(color);
+		return new SuccessResult("Color.Added");
 	}
 
 	@Override
-	public DataResult<GetColorDto> getById(int colorId) throws BusinessException {
-		var result = this.colorDao.getColorById(colorId);
-		if (result != null) {
-			GetColorDto response = this.modelMapperService.forDto().map(result, GetColorDto.class);
-			return new SuccessDataResult<GetColorDto>(response);
+	public DataResult<GetColorDto> getById(int colorId){
+		
+		Color result = this.colorDao.getColorById(colorId);
+		
+		if (result == null) {
+			
+			return new ErrorDataResult<GetColorDto>("Böyle bir id bulunamadı.");
 		}
-		throw new BusinessException("Renklerin içerisinde böyle bir id bulunmamaktadır.");
+		GetColorDto response = this.modelMapperService.forDto().map(result, GetColorDto.class);
+		return new SuccessDataResult<GetColorDto>(response);
 	}
 
-	private boolean checkIfColorName(CreateColorRequest createColorRequest) throws BusinessException {
+	@Override
+	public Result delete(DeleteColorRequest deleteColorRequest){
+		
+		Color color = this.modelMapperService.forRequest().map(deleteColorRequest, Color.class);
+		
+		checkColorIdExist(color);
+		
+		this.colorDao.deleteById(color.getId());
+		return new SuccessResult("Color.Deleted");
+	}
+
+	@Override
+	public Result update(UpdateColorRequest updateColorRequest){
+		
+		Color color = this.modelMapperService.forRequest().map(updateColorRequest, Color.class);
+		
+		checkColorIdExist(color);
+		
+		this.colorDao.save(color);
+		return new SuccessResult("Color.Updated");
+	}
+
+	private boolean checkColorIdExist(Color color) {
+		
+		if(this.colorDao.getColorById(color.getId()) != null) {
+			
+			return true;
+		}
+		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+	}
+	
+	private boolean checkIfColorName(CreateColorRequest createColorRequest){
+		
 		Color color = this.colorDao.getColorByName(createColorRequest.getName());
 		if (color == null) {
+			
 			return true;
 		}
 		throw new BusinessException("Aynı isimde bir renk kayıtlıdır.");
 	}
-
-	@Override
-	public Result delete(DeleteColorRequest deleteColorRequest) throws BusinessException {
-		Color color = this.modelMapperService.forRequest().map(deleteColorRequest, Color.class);
-		if (checkColorIdExist(color)) {
-			this.colorDao.deleteById(color.getId());
-			return new SuccessResult("Color.Deleted");
-		}
-		return new ErrorResult("Color.NotFound");
-	}
-
-	@Override
-	public Result update(UpdateColorRequest updateColorRequest) throws BusinessException {
-		Color color = this.modelMapperService.forRequest().map(updateColorRequest, Color.class);
-		if (checkColorIdExist(color)) {
-			this.colorDao.save(color);
-			return new SuccessResult("Color.Updated");
-		}
-		return new ErrorResult("Color.NotFound");
-	}
-
-	private boolean checkColorIdExist(Color color) {
-
-		return this.colorDao.getColorById(color.getId()) != null;
-
-	}
-
 }

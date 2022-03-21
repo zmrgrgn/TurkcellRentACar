@@ -36,8 +36,8 @@ public class Rental {
 	@Column(name="return_date")
 	private LocalDate returnDate;
 	
-    @Column(name = "additional_price")
-    private double additionalPrice = 0;
+    @Column(name = "total_price")
+    private double totalPrice;
     
     @Column(name = "rent_km")
     private int rentKm;
@@ -53,7 +53,7 @@ public class Rental {
 	@JoinColumn(name = "car_id")
 	private Car car;
 	
-	@OneToMany
+	@OneToMany(mappedBy="rental")
 	private List<OrderedAdditionalService> orderedAdditionalServices;
 	
 	@ManyToOne

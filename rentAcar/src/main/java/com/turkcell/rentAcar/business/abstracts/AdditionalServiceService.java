@@ -7,7 +7,6 @@ import com.turkcell.rentAcar.business.dtos.additionalService.ListAdditionalServi
 import com.turkcell.rentAcar.business.requests.additionalService.CreateAdditionalServiceRequest;
 import com.turkcell.rentAcar.business.requests.additionalService.DeleteAdditionalServiceRequest;
 import com.turkcell.rentAcar.business.requests.additionalService.UpdateAdditionalServiceRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
@@ -17,7 +16,7 @@ public interface AdditionalServiceService {
 
 	Result add(CreateAdditionalServiceRequest createAdditionalServiceRequest);
 
-	DataResult<GetAdditionalServiceDto> getById(int additionalServiceId) throws BusinessException;
+	DataResult<GetAdditionalServiceDto> getById(int additionalServiceId);
 
 	Result delete(DeleteAdditionalServiceRequest deleteAdditionalServiceRequest);
 

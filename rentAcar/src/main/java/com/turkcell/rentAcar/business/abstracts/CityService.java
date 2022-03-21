@@ -7,7 +7,6 @@ import com.turkcell.rentAcar.business.dtos.city.ListCityDto;
 import com.turkcell.rentAcar.business.requests.city.CreateCityRequest;
 import com.turkcell.rentAcar.business.requests.city.DeleteCityRequest;
 import com.turkcell.rentAcar.business.requests.city.UpdateCityRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
@@ -15,11 +14,11 @@ public interface CityService {
 	
 	DataResult<List<ListCityDto>> getAll();
 
-	Result add(CreateCityRequest createCityRequest) throws BusinessException;
+	Result add(CreateCityRequest createCityRequest);
 
-	DataResult<GetCityDto> getById(int cityId) throws BusinessException;
+	DataResult<GetCityDto> getById(int cityId);
 
-	Result delete(DeleteCityRequest deleteCityRequest) throws BusinessException;
+	Result delete(DeleteCityRequest deleteCityRequest);
 
-	Result update(UpdateCityRequest updateCityRequest) throws BusinessException;
+	Result update(UpdateCityRequest updateCityRequest);
 }

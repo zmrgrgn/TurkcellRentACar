@@ -14,7 +14,7 @@ import com.turkcell.rentAcar.business.requests.brand.DeleteBrandRequest;
 import com.turkcell.rentAcar.business.requests.brand.UpdateBrandRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorResult;
+import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -29,7 +29,6 @@ public class BrandManager implements BrandService {
 
 	@Autowired
 	public BrandManager(BrandDao brandDao, ModelMapperService modelMapperService) {
-		super();
 		this.brandDao = brandDao;
 		this.modelMapperService = modelMapperService;
 	}
@@ -44,66 +43,75 @@ public class BrandManager implements BrandService {
 	}
 
 	@Override
-	public Result add(CreateBrandRequest createBrandRequest) throws BusinessException{
+	public Result add(CreateBrandRequest createBrandRequest){
 		
 		Brand brand = this.modelMapperService.forRequest().map(createBrandRequest, Brand.class);
-		if (checkIfBrandName(createBrandRequest)) {
-			this.brandDao.save(brand);
-			return new SuccessResult("Brand.Added");
-		}
 		
-		return new ErrorResult("Brand.NotFound");
+		checkIfBrandName(createBrandRequest.getName());
+			
+		this.brandDao.save(brand);
+		
+		return new SuccessResult("Brand.Added");
 	}
 
 	@Override
-	public DataResult<GetBrandDto> getById(int brandId) throws BusinessException {
+	public DataResult<GetBrandDto> getById(int brandId) {
 		
-		var result = this.brandDao.getBrandById(brandId);
-		if (result != null) {
-			GetBrandDto response = this.modelMapperService.forDto().map(result, GetBrandDto.class);
-			return new SuccessDataResult<GetBrandDto>(response);
+		Brand result = this.brandDao.getBrandById(brandId);
+		
+		if (result == null) {
+			return new ErrorDataResult<GetBrandDto>("Böyle bir id bulunamadı.");
 		}
-		
-		throw new BusinessException("Markaların içerisinde böyle bir id bulunmamaktadır.");
-	}
-
-	private boolean checkIfBrandName(CreateBrandRequest createBrandRequest) throws BusinessException {
-		
-		Brand brand = this.brandDao.getBrandByName(createBrandRequest.getName());
-		if (brand == null) {
-			return true;
-		}
-		
-		throw new BusinessException("Aynı isimde bir marka bulunmaktadır.");
+		GetBrandDto response = this.modelMapperService.forDto().map(result, GetBrandDto.class);
+		return new SuccessDataResult<GetBrandDto>(response);
 	}
 
 	@Override
 	public Result delete(DeleteBrandRequest deleteBrandRequest){
 		
 		Brand brand = this.modelMapperService.forRequest().map(deleteBrandRequest, Brand.class);
-		if (checkBrandIdExist(brand)) {
-			this.brandDao.deleteById(brand.getId());
-			return new SuccessResult("Brand.Deleted");
-		}
 		
-		return new ErrorResult("Brand.NotFound");
+		checkBrandIdExist(brand);
+		
+		this.brandDao.deleteById(brand.getId());
+		
+		return new SuccessResult("Brand.Deleted");
 	}
 
 	@Override
 	public Result update(UpdateBrandRequest updateBrandRequest){
 		
 		Brand brand = this.modelMapperService.forRequest().map(updateBrandRequest, Brand.class);
-		if (checkBrandIdExist(brand)) {
-			this.brandDao.save(brand);
-			return new SuccessResult("Brand.Updated");
+		
+		checkBrandIdExist(brand);
+		
+		checkIfBrandName(updateBrandRequest.getName());
+		
+		this.brandDao.save(brand);
+		
+		return new SuccessResult("Brand.Updated");
+
+	}
+
+	private boolean checkIfBrandName(String brandName) {
+		
+		if (this.brandDao.getBrandByName(brandName) == null) {
+		
+			return true;
 		}
 		
-		return new ErrorResult("Brand.NotFound");
+		throw new BusinessException("Aynı isimde bir marka bulunmaktadır.");
 	}
 
 	private boolean checkBrandIdExist(Brand brand) {
-
-		return this.brandDao.getBrandById(brand.getId()) != null;
+		
+		if(this.brandDao.getBrandById(brand.getId()) != null) {
+		
+			return true;
+		
+		}
+		
+		throw new BusinessException("Böyle bir id bulunmamaktadır.");
 
 	}
 }

@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 import com.turkcell.rentAcar.entities.concretes.City;
 @Repository
 public interface CityDao extends JpaRepository<City, Integer>{
-
+	City getCityById(int cityId);
 }

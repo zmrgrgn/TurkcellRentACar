@@ -18,7 +18,6 @@ import com.turkcell.rentAcar.business.dtos.individualcustomer.GetIndividualCusto
 import com.turkcell.rentAcar.business.dtos.individualcustomer.ListIndividualCustomerDto;
 import com.turkcell.rentAcar.business.requests.individualcustomer.CreateIndividualCustomerRequest;
 import com.turkcell.rentAcar.business.requests.individualcustomer.UpdateIndividualCustomerRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
@@ -36,15 +35,15 @@ public class IndividualCustomersController {
 		return individualCustomerService.getAll();
 	}
 	@PostMapping("add")
-	public Result add(@RequestBody @Valid CreateIndividualCustomerRequest createIndividualCustomerRequest) throws BusinessException{
+	public Result add(@RequestBody @Valid CreateIndividualCustomerRequest createIndividualCustomerRequest){
 		return individualCustomerService.add(createIndividualCustomerRequest);
 	}
 	@GetMapping("/getid")
-	public DataResult<GetIndividualCustomerDto> getById(@RequestParam("id")int id) throws BusinessException{
+	public DataResult<GetIndividualCustomerDto> getById(@RequestParam("id")int id){
 		return individualCustomerService.getById(id);
 	}
 	@PutMapping("/update")
-	public Result update(@RequestBody @Valid UpdateIndividualCustomerRequest updateIndividualCustomerRequest) throws BusinessException{
+	public Result update(@RequestBody @Valid UpdateIndividualCustomerRequest updateIndividualCustomerRequest){
 		return individualCustomerService.update(updateIndividualCustomerRequest);
 	}
 }

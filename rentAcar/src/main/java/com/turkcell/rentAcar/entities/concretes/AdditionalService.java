@@ -33,7 +33,7 @@ public class AdditionalService {
 	@Column(name = "daily_price")
 	private int dailyPrice;
 	
-	@OneToMany
+	@OneToMany(mappedBy="additionalService")
 	private List<OrderedAdditionalService> orderedAdditionalServices;
 
 }

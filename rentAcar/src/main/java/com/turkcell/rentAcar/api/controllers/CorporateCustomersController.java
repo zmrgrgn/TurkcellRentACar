@@ -18,7 +18,6 @@ import com.turkcell.rentAcar.business.dtos.corporatecustomer.GetCorporateCustome
 import com.turkcell.rentAcar.business.dtos.corporatecustomer.ListCorporateCustomerDto;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.CreateCorporateCustomerRequest;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.UpdateCorporateCustomerRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
@@ -36,15 +35,15 @@ public class CorporateCustomersController {
 		return corporateCustomerService.getAll();
 	}
 	@PostMapping("add")
-	public Result add(@RequestBody @Valid CreateCorporateCustomerRequest createCorporateCustomerRequest) throws BusinessException{
+	public Result add(@RequestBody @Valid CreateCorporateCustomerRequest createCorporateCustomerRequest){
 		return corporateCustomerService.add(createCorporateCustomerRequest);
 	}
 	@GetMapping("/getid")
-	public DataResult<GetCorporateCustomerDto> getById(@RequestParam("id")int id) throws BusinessException{
+	public DataResult<GetCorporateCustomerDto> getById(@RequestParam("id")int id){
 		return corporateCustomerService.getById(id);
 	}
 	@PutMapping("/update")
-	public Result update(@RequestBody @Valid UpdateCorporateCustomerRequest updateCorporateCustomerRequest) throws BusinessException{
+	public Result update(@RequestBody @Valid UpdateCorporateCustomerRequest updateCorporateCustomerRequest){
 		return corporateCustomerService.update(updateCorporateCustomerRequest);
 	}
 }

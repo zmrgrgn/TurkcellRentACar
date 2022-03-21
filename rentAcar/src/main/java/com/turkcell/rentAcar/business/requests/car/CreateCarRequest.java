@@ -22,6 +22,8 @@ public class CreateCarRequest {
 	@NotNull
 	@Size(min=2)
 	private String description;
+	@NotNull
+	@Min(0)
 	private int km;
 	@NotNull
 	@Positive

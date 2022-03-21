@@ -14,7 +14,7 @@ import com.turkcell.rentAcar.business.requests.city.DeleteCityRequest;
 import com.turkcell.rentAcar.business.requests.city.UpdateCityRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorResult;
+import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -30,59 +30,66 @@ public class CityManager implements CityService{
 	
 	@Autowired
 	public CityManager(ModelMapperService modelMapperService, CityDao cityDao) {
-		super();
 		this.modelMapperService = modelMapperService;
 		this.cityDao = cityDao;
 	}
 
 	@Override
 	public DataResult<List<ListCityDto>> getAll() {
+		
 		var result = this.cityDao.findAll();
-		List<ListCityDto> response = result.stream()
-				.map(city -> this.modelMapperService.forDto().map(city, ListCityDto.class)).collect(Collectors.toList());
+		
+		List<ListCityDto> response = result.stream().map(city -> this.modelMapperService.forDto().map(city, ListCityDto.class)).collect(Collectors.toList());
 		return new SuccessDataResult<List<ListCityDto>>(response);
 	}
 
 	@Override
-	public Result add(CreateCityRequest createCityRequest) throws BusinessException {
+	public Result add(CreateCityRequest createCityRequest){
+		
 		City city = this.modelMapperService.forRequest().map(createCityRequest, City.class);
+		
 		this.cityDao.save(city);
 		return new SuccessResult("City.Added");
 	}
 
 	@Override
-	public DataResult<GetCityDto> getById(int cityId) throws BusinessException {
-		var result = this.cityDao.getById(cityId);
-		if (result != null) {
-			GetCityDto response = this.modelMapperService.forDto().map(result, GetCityDto.class);
-			return new SuccessDataResult<GetCityDto>(response);
+	public DataResult<GetCityDto> getById(int cityId){
+		
+		City result = this.cityDao.getById(cityId);
+		if (result == null) {
+			
+			return new ErrorDataResult<GetCityDto>("Böyle bir id bulunamadı.");
 		}
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		GetCityDto response = this.modelMapperService.forDto().map(result, GetCityDto.class);
+		return new SuccessDataResult<GetCityDto>(response);
 	}
 
 	@Override
-	public Result delete(DeleteCityRequest deleteCityRequest) throws BusinessException {
+	public Result delete(DeleteCityRequest deleteCityRequest){
+		
 		City city = this.modelMapperService.forRequest().map(deleteCityRequest, City.class);
-		if (checkCityIdExist(city)) {
-			this.cityDao.deleteById(city.getId());
-			return new SuccessResult("City.Deleted");
-		}
-		return new ErrorResult("City.NotFound");
+		
+		checkCityIdExist(city);
+			
+		this.cityDao.deleteById(city.getId());
+		return new SuccessResult("City.Deleted");
 	}
 
 	@Override
-	public Result update(UpdateCityRequest updateCityRequest) throws BusinessException {
+	public Result update(UpdateCityRequest updateCityRequest){
+		
 		City city = this.modelMapperService.forRequest().map(updateCityRequest, City.class);
-		if(checkCityIdExist(city)) {
-			this.cityDao.save(city);
-			return new SuccessResult("city.Updated");
-		}
-		return new ErrorResult("city.NotFound");
+	
+		checkCityIdExist(city);
+	
+		this.cityDao.save(city);
+		return new SuccessResult("city.Updated");
 	}
 	private boolean checkCityIdExist(City city) {
-
-		return this.cityDao.getById(city.getId()) != null;
-
+		if(this.cityDao.getCityById(city.getId()) != null) {
+			return true;
+		}
+		throw new BusinessException("Böyle bir id bulunmamaktadır.");
 	}
 
 }

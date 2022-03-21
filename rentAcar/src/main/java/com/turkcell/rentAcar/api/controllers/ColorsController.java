@@ -20,7 +20,6 @@ import com.turkcell.rentAcar.business.dtos.color.ListColorDto;
 import com.turkcell.rentAcar.business.requests.color.CreateColorRequest;
 import com.turkcell.rentAcar.business.requests.color.DeleteColorRequest;
 import com.turkcell.rentAcar.business.requests.color.UpdateColorRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
@@ -38,19 +37,19 @@ public class ColorsController {
 		 return this.colorService.getAll();
 	 }
 	@PostMapping("add")
-	 public Result add(@RequestBody @Valid CreateColorRequest createColorRequest) throws BusinessException {
+	 public Result add(@RequestBody @Valid CreateColorRequest createColorRequest){
 		 return this.colorService.add(createColorRequest);
 	 }
 	@GetMapping("/getid")
-	public DataResult<GetColorDto> getById(@RequestParam("colorId") int colorId) throws BusinessException {
+	public DataResult<GetColorDto> getById(@RequestParam("colorId") int colorId){
 		return this.colorService.getById(colorId);
 	}
 	@DeleteMapping("/delete")
-	public Result delete(@RequestBody @Valid DeleteColorRequest deleteColorRequest) throws BusinessException{
+	public Result delete(@RequestBody @Valid DeleteColorRequest deleteColorRequest){
 		return this.colorService.delete(deleteColorRequest);
 	}
 	@PutMapping("/update")
-	public Result update(@RequestBody @Valid UpdateColorRequest updateColorRequest)throws BusinessException{
+	public Result update(@RequestBody @Valid UpdateColorRequest updateColorRequest){
 		return this.colorService.update(updateColorRequest);
 	}
 }

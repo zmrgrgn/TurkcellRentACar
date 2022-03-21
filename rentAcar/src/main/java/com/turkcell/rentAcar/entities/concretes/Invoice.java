@@ -41,7 +41,7 @@ public class Invoice {
 	private LocalDate returnDate;
 	
 	@Column(name="total_day")
-	private int totalDay;
+	private long totalDay;
 	
 	@Column(name="rent_total_price")
 	private double rentTotalPrice;
@@ -54,4 +54,6 @@ public class Invoice {
     @JoinColumn(name = "rental_id")
     private Rental rental; 
 	
+	@OneToOne(mappedBy = "invoice")
+	private Payment payment;
 }

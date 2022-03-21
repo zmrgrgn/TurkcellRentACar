@@ -22,7 +22,6 @@ import com.turkcell.rentAcar.business.dtos.invoice.ListInvoiceDto;
 import com.turkcell.rentAcar.business.requests.invoice.CreateInvoiceRequest;
 import com.turkcell.rentAcar.business.requests.invoice.DeleteInvoiceRequest;
 import com.turkcell.rentAcar.business.requests.invoice.UpdateInvoiceRequest;
-import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
@@ -37,11 +36,11 @@ public class InvoicesController {
 	}
 	
 	@PostMapping("/add")
-	Result add(@RequestBody @Valid CreateInvoiceRequest createInvoiceRequest) throws BusinessException{
+	Result add(@RequestBody @Valid CreateInvoiceRequest createInvoiceRequest){
 		return this.invoiceService.add(createInvoiceRequest);
 	}
 	@DeleteMapping("/delete")
-	Result delete(@RequestBody @Valid DeleteInvoiceRequest deleteInvoiceRequest) throws BusinessException{
+	Result delete(@RequestBody @Valid DeleteInvoiceRequest deleteInvoiceRequest){
 		return this.invoiceService.delete(deleteInvoiceRequest);
 	}
 	@GetMapping("/getall")
@@ -49,11 +48,11 @@ public class InvoicesController {
 		return this.invoiceService.getAll();
 	}
 	@PutMapping("/update")
-	Result update(@RequestBody @Valid UpdateInvoiceRequest updateInvoiceRequest) throws BusinessException{
+	Result update(@RequestBody @Valid UpdateInvoiceRequest updateInvoiceRequest){
 		return this.invoiceService.update(updateInvoiceRequest);
 	}
 	@GetMapping("/getbyid")
-	DataResult<GetInvoiceDto> getByInvoiceId(@RequestParam("InvoiceId") int invoiceId) throws BusinessException{
+	DataResult<GetInvoiceDto> getByInvoiceId(@RequestParam("InvoiceId") int invoiceId){
 		return this.invoiceService.getByInvoiceId(invoiceId);
 	}
 	@GetMapping("/getbydate")

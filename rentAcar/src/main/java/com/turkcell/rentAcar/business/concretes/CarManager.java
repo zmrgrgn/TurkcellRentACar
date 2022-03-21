@@ -9,49 +9,54 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.turkcell.rentAcar.business.abstracts.BrandService;
 import com.turkcell.rentAcar.business.abstracts.CarService;
-import com.turkcell.rentAcar.business.abstracts.RentalService;
+import com.turkcell.rentAcar.business.abstracts.ColorService;
 import com.turkcell.rentAcar.business.dtos.car.GetCarDto;
 import com.turkcell.rentAcar.business.dtos.car.ListCarDto;
-import com.turkcell.rentAcar.business.dtos.rental.ListRentalDto;
 import com.turkcell.rentAcar.business.requests.car.CreateCarRequest;
 import com.turkcell.rentAcar.business.requests.car.DeleteCarRequest;
 import com.turkcell.rentAcar.business.requests.car.UpdateCarRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorResult;
+import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
 import com.turkcell.rentAcar.core.utilities.mapping.ModelMapperService;
 import com.turkcell.rentAcar.dataAccess.abstracts.CarDao;
 import com.turkcell.rentAcar.entities.concretes.Car;
-import com.turkcell.rentAcar.entities.concretes.Rental;
 
 @Service
 public class CarManager implements CarService {
 	private CarDao carDao;
 	private ModelMapperService modelMapperService;
+	private BrandService brandService;
+	private ColorService colorService;
 
 	@Autowired
-	public CarManager(CarDao carDao, ModelMapperService modelMapperService) {
-		super();
+	public CarManager(CarDao carDao, ModelMapperService modelMapperService,BrandService brandService,ColorService colorService) {
 		this.carDao = carDao;
 		this.modelMapperService = modelMapperService;
+		this.brandService=brandService;
+		this.colorService=colorService;
 	}
 
 	@Override
 	public DataResult<List<ListCarDto>> getAll() {
 		
 		var result = this.carDao.findAll();
-		List<ListCarDto> response = result.stream()
-				.map(car -> this.modelMapperService.forDto().map(car, ListCarDto.class)).collect(Collectors.toList());
+		List<ListCarDto> response = result.stream().map(car -> this.modelMapperService.forDto().map(car, ListCarDto.class)).collect(Collectors.toList());
 		
 		return new SuccessDataResult<List<ListCarDto>>(response);
 	}
 
 	@Override
 	public Result add(CreateCarRequest createCarRequest) {
+		
+		checkBrandIdExist(createCarRequest.getBrandId());
+		
+		checkColorIdExist(createCarRequest.getColorId());
 		
 		Car car = this.modelMapperService.forRequest().map(createCarRequest, Car.class);
 		this.carDao.save(car);
@@ -60,40 +65,45 @@ public class CarManager implements CarService {
 	}
 
 	@Override
-	public DataResult<GetCarDto> getById(int carId) throws BusinessException {
+	public DataResult<GetCarDto> getById(int carId){
 		
-		var result = this.carDao.getCarById(carId);
-		if (result != null) {
-			GetCarDto response = this.modelMapperService.forDto().map(result, GetCarDto.class);
-			return new SuccessDataResult<GetCarDto>(response);
+		Car result = this.carDao.getCarById(carId);
+		
+		if (result == null) {
+			
+			return new ErrorDataResult<GetCarDto>("Böyle bir id bulunamadı.");
 		}
 		
-		throw new BusinessException("Arabaların içerisinde böyle bir id bulunmamaktadır.");
+		GetCarDto response = this.modelMapperService.forDto().map(result, GetCarDto.class);
+		return new SuccessDataResult<GetCarDto>(response);
 	}
 
 	@Override
 	public Result delete(DeleteCarRequest deleteCarRequest){
 		
 		Car car = this.modelMapperService.forRequest().map(deleteCarRequest, Car.class);
-		if (checkCarIdExist(car)) {
-			this.carDao.deleteById(car.getId());
-			return new SuccessResult("Car.Deleted");
-		}
 		
-		return new ErrorResult("Car.NotFound");
+		checkCarIdExist(car);
+			
+		this.carDao.deleteById(car.getId());
+		
+		return new SuccessResult("Car.Deleted");
 	}
 
 	@Override
-	public Result update(UpdateCarRequest updateCarRequest) throws BusinessException {
+	public Result update(UpdateCarRequest updateCarRequest){
 		
 		Car car=this.modelMapperService.forRequest().map(updateCarRequest, Car.class);
-		if(checkCarIdExist(car)) {
-			this.carDao.save(car);
-			return new SuccessResult("Car.Updated");
-		}
 		
-		return new ErrorResult("Car.NotFound");
-
+		checkCarIdExist(car);
+			
+		checkBrandIdExist(updateCarRequest.getBrandId());
+			
+		checkColorIdExist(updateCarRequest.getColorId());
+			
+		this.carDao.save(car);
+		
+		return new SuccessResult("Car.Updated");
 	}
 	@Override
 	public DataResult<List<ListCarDto>> getAllPaged(int pageNo, int pageSize) {
@@ -130,8 +140,31 @@ public class CarManager implements CarService {
 	}
 
 	private boolean checkCarIdExist(Car car) {
-
-		return this.carDao.getCarById(car.getId()) != null;
-
+	
+		if(this.carDao.getCarById(car.getId()) != null) {
+			
+			return true;
+		}
+		
+		throw new BusinessException("Böyle bir id bulunmamaktadır.");
 	}
+	
+	private boolean checkBrandIdExist(int brandId) {
+		
+		if(this.brandService.getById(brandId).getData() != null) {
+			
+			return true;
+		}
+		throw new BusinessException("Böyle bir marka id'si bulunmamaktadır.");
+	}
+	
+	private boolean checkColorIdExist(int colorId) {
+		
+		if(this.colorService.getById(colorId).getData() != null) {
+			
+			return true;
+		}
+		throw new BusinessException("Böyle bir renk id'si bulunmamaktadır.");
+	}
+	
 }
