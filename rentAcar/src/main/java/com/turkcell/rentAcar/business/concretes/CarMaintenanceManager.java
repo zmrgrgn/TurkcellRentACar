@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.turkcell.rentAcar.business.abstracts.CarMaintenanceService;
 import com.turkcell.rentAcar.business.abstracts.CarService;
 import com.turkcell.rentAcar.business.abstracts.RentalService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.carMaintenance.GetCarMaintenanceDto;
 import com.turkcell.rentAcar.business.dtos.carMaintenance.ListCarMaintenanceDto;
 import com.turkcell.rentAcar.business.dtos.rental.ListRentalDto;
@@ -18,7 +19,6 @@ import com.turkcell.rentAcar.business.requests.carMaintenance.DeleteCarMaintenan
 import com.turkcell.rentAcar.business.requests.carMaintenance.UpdateCarMaintenanceRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -68,7 +68,7 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 		
 		this.carMaintenanceDao.save(carMaintenance);
 		
-		return new SuccessResult("CarMaintenance.Added");
+		return new SuccessResult(Messages.CARMAINTENANCEADDED);
 	}
 
 	@Override
@@ -76,7 +76,8 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 		
 		CarMaintenance result = this.carMaintenanceDao.getCarMaintenanceById(carMaintenanceId);
 		if (result == null) {
-			return new ErrorDataResult<GetCarMaintenanceDto>("Böyle bir id bulunamadı.");
+			
+			throw new BusinessException(Messages.CARMAINTENANCENOTFOUND);
 		}
 		
 		GetCarMaintenanceDto response = this.modelMapperService.forDto().map(result, GetCarMaintenanceDto.class);
@@ -92,7 +93,7 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 		
 		this.carMaintenanceDao.deleteById(carMaintenance.getId());
 		
-		return new SuccessResult("CarMaintenance.Deleted");
+		return new SuccessResult(Messages.CARMAINTENANCEDELETED);
 	}
 
 	@Override
@@ -108,7 +109,7 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 		
 		this.carMaintenanceDao.save(carMaintenance);
 		
-		return new SuccessResult("CarMaintenance.Updated");
+		return new SuccessResult(Messages.CARMAINTENANCEUPDATED);
 
 	}
 
@@ -127,7 +128,7 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.CARMAINTENANCENOTFOUND);
 	}
 	private boolean checkIfCarExists(int carId) {
 		
@@ -135,7 +136,7 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir araba id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.CARMAINTENANCECARIDNOTFOUND);
 	}
 	
 	private void checkCarMaintenance(int carId) {
@@ -146,7 +147,7 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 			
 			if(carMaintenance.getReturnDate()==null) {
 			
-				throw new BusinessException("Araba bakımda, bakıma verilemez.");
+				throw new BusinessException(Messages.CARMAINTENANCESTILLMAINTENANCED);
 			}
 		}
 	}
@@ -159,7 +160,7 @@ public class CarMaintenanceManager implements CarMaintenanceService {
 				
 			if(rental.getReturnDate()==null) {
 				
-				throw new BusinessException("Araba kirada, bakıma verilemez.");
+				throw new BusinessException(Messages.CARMAINTENANCECARINRENT);
 			}
 		}
 	}

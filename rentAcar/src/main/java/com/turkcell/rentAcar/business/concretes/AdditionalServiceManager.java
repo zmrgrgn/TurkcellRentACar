@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.AdditionalServiceService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.additionalService.GetAdditionalServiceDto;
 import com.turkcell.rentAcar.business.dtos.additionalService.ListAdditionalServiceDto;
 import com.turkcell.rentAcar.business.requests.additionalService.CreateAdditionalServiceRequest;
@@ -14,7 +15,6 @@ import com.turkcell.rentAcar.business.requests.additionalService.DeleteAdditiona
 import com.turkcell.rentAcar.business.requests.additionalService.UpdateAdditionalServiceRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -48,7 +48,7 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 		AdditionalService additionalService = this.modelMapperService.forRequest().map(createAdditionalServiceRequest,AdditionalService.class);
 		this.additionalServiceDao.save(additionalService);
 		
-		return new SuccessResult("additionalService.Added");
+		return new SuccessResult(Messages.ADDITIONALSERVICEADDED);
 	}
 
 	@Override
@@ -57,7 +57,8 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 		AdditionalService result = this.additionalServiceDao.getAdditionalServiceById(additionalServiceId);
 		
 		if (result == null) {
-			return new ErrorDataResult<GetAdditionalServiceDto>("Böyle bir id bulunamadı.");
+			
+			throw new BusinessException(Messages.ADDITIONALSERVICENOTFOUND);
 		}
 		
 		GetAdditionalServiceDto response = this.modelMapperService.forDto().map(result, GetAdditionalServiceDto.class);
@@ -73,7 +74,7 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 
 		this.additionalServiceDao.deleteById(additionalService.getId());
 
-		return new SuccessResult("additionalService.Deleted");
+		return new SuccessResult(Messages.ADDITIONALSERVICEDELETED);
 
 	}
 
@@ -86,7 +87,7 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 		
 		this.additionalServiceDao.save(additionalService);
 		
-		return new SuccessResult("additionalService.Updated");
+		return new SuccessResult(Messages.ADDITIONALSERVICEUPDATED);
 
 	}
 	
@@ -97,7 +98,7 @@ public class AdditionalServiceManager implements AdditionalServiceService{
 			return true;
 		}
 		
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.ADDITIONALSERVICENOTFOUND);
 	}
 
 }

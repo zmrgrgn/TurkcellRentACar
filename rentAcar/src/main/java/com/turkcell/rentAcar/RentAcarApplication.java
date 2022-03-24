@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.ErrorDataResult;
 
@@ -34,7 +35,7 @@ public class RentAcarApplication {
 		for (FieldError fieldError : argumentNotValidException.getBindingResult().getFieldErrors()) {
 			validationErrors.put(fieldError.getField(), fieldError.getDefaultMessage());
 		}
-		ErrorDataResult<Object> errorDataResult=new ErrorDataResult<Object>(validationErrors,"Validation.Errors");
+		ErrorDataResult<Object> errorDataResult=new ErrorDataResult<Object>(validationErrors,Messages.VALIDATIONERRORS);
 		return errorDataResult;
 		
 	}
@@ -43,7 +44,7 @@ public class RentAcarApplication {
 	public ErrorDataResult<Object> handleBusinessExceptions(BusinessException businessException) {
 		
 		ErrorDataResult<Object> errorDataResult = new ErrorDataResult<Object>(businessException.getMessage(),
-				"Business.Errors");
+				Messages.BUSINESSEXCEPTIONERRORS);
 		return errorDataResult;
 		
 	}

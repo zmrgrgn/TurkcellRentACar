@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.ColorService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.color.GetColorDto;
 import com.turkcell.rentAcar.business.dtos.color.ListColorDto;
 import com.turkcell.rentAcar.business.requests.color.CreateColorRequest;
@@ -14,7 +15,6 @@ import com.turkcell.rentAcar.business.requests.color.DeleteColorRequest;
 import com.turkcell.rentAcar.business.requests.color.UpdateColorRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -51,7 +51,7 @@ public class ColorManager implements ColorService {
 		checkIfColorName(createColorRequest);
 		
 		this.colorDao.save(color);
-		return new SuccessResult("Color.Added");
+		return new SuccessResult(Messages.COLORADDED);
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class ColorManager implements ColorService {
 		
 		if (result == null) {
 			
-			return new ErrorDataResult<GetColorDto>("Böyle bir id bulunamadı.");
+			throw new BusinessException(Messages.COLORNOTFOUND);
 		}
 		GetColorDto response = this.modelMapperService.forDto().map(result, GetColorDto.class);
 		return new SuccessDataResult<GetColorDto>(response);
@@ -75,7 +75,7 @@ public class ColorManager implements ColorService {
 		checkColorIdExist(color);
 		
 		this.colorDao.deleteById(color.getId());
-		return new SuccessResult("Color.Deleted");
+		return new SuccessResult(Messages.COLORDELETED);
 	}
 
 	@Override
@@ -86,7 +86,7 @@ public class ColorManager implements ColorService {
 		checkColorIdExist(color);
 		
 		this.colorDao.save(color);
-		return new SuccessResult("Color.Updated");
+		return new SuccessResult(Messages.COLORUPDATED);
 	}
 
 	private boolean checkColorIdExist(Color color) {
@@ -95,7 +95,7 @@ public class ColorManager implements ColorService {
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.COLORNOTFOUND);
 	}
 	
 	private boolean checkIfColorName(CreateColorRequest createColorRequest){
@@ -105,6 +105,6 @@ public class ColorManager implements ColorService {
 			
 			return true;
 		}
-		throw new BusinessException("Aynı isimde bir renk kayıtlıdır.");
+		throw new BusinessException(Messages.COLOREXISTS);
 	}
 }

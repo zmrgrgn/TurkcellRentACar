@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.IndividualCustomerService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.individualcustomer.GetIndividualCustomerDto;
 import com.turkcell.rentAcar.business.dtos.individualcustomer.ListIndividualCustomerDto;
 import com.turkcell.rentAcar.business.requests.individualcustomer.CreateIndividualCustomerRequest;
 import com.turkcell.rentAcar.business.requests.individualcustomer.UpdateIndividualCustomerRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -48,7 +48,7 @@ public class IndividualCustomerManager implements IndividualCustomerService{
 		IndividualCustomer individualCustomer = this.modelMapperService.forRequest().map(createIndividualCustomerRequest, IndividualCustomer.class);
 		
 		this.individualCustomerDao.save(individualCustomer);
-		return new SuccessResult("individualCustomer.Added");
+		return new SuccessResult(Messages.INDIVIDUALCUSTOMERADDED);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class IndividualCustomerManager implements IndividualCustomerService{
 		
 		if (result == null) {
 	
-			return new ErrorDataResult<GetIndividualCustomerDto>("Böyle bir id bulunamadı.");
+			throw new BusinessException(Messages.INDIVIDUALCUSTOMERNOTFOUND);
 		}
 		GetIndividualCustomerDto response = this.modelMapperService.forDto().map(result, GetIndividualCustomerDto.class);
 		return new SuccessDataResult<GetIndividualCustomerDto>(response);
@@ -72,7 +72,7 @@ public class IndividualCustomerManager implements IndividualCustomerService{
 		checkIndividualCustomerIdExist(individualCustomer);
 		
 		this.individualCustomerDao.save(individualCustomer);
-		return new SuccessResult("individualCustomer.Updated");
+		return new SuccessResult(Messages.INDIVIDUALCUSTOMERUPDATED);
 
 	}
 	
@@ -80,7 +80,7 @@ public class IndividualCustomerManager implements IndividualCustomerService{
 		if(this.individualCustomerDao.getById(individualCustomer.getCustomerId()) != null) {
 			return true;
 		}
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.INDIVIDUALCUSTOMERNOTFOUND);
 	}
 
 }

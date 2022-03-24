@@ -37,7 +37,7 @@ public class Rental {
 	private LocalDate returnDate;
 	
     @Column(name = "total_price")
-    private double totalPrice;
+    private double totalPrice=0;
     
     @Column(name = "rent_km")
     private int rentKm;

@@ -7,13 +7,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.CorporateCustomerService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.corporatecustomer.GetCorporateCustomerDto;
 import com.turkcell.rentAcar.business.dtos.corporatecustomer.ListCorporateCustomerDto;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.CreateCorporateCustomerRequest;
 import com.turkcell.rentAcar.business.requests.corporatecustomer.UpdateCorporateCustomerRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -48,7 +48,7 @@ public class CorporateCustomerManager implements CorporateCustomerService{
 		CorporateCustomer corporateCustomer = this.modelMapperService.forRequest().map(createCorporateCustomerRequest, CorporateCustomer.class);
 		this.corporateCustomerDao.save(corporateCustomer);
 		
-		return new SuccessResult("corporateCustomer.Added");
+		return new SuccessResult(Messages.CORPORATECUSTOMERADDED);
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class CorporateCustomerManager implements CorporateCustomerService{
 		
 		if (result == null) {
 			
-			return new ErrorDataResult<GetCorporateCustomerDto>("Böyle bir id bulunamadı.");
+			throw new BusinessException(Messages.CORPORATECUSTOMERNOTFOUND);
 		}
 		GetCorporateCustomerDto response = this.modelMapperService.forDto().map(result, GetCorporateCustomerDto.class);
 		return new SuccessDataResult<GetCorporateCustomerDto>(response);
@@ -72,7 +72,7 @@ public class CorporateCustomerManager implements CorporateCustomerService{
 		checkCorporateCustomerIdExist(corporateCustomer);
 		
 		this.corporateCustomerDao.save(corporateCustomer);	
-		return new SuccessResult("corporateCustomer.Updated");
+		return new SuccessResult(Messages.CORPORATECUSTOMERUPDATED);
 
 	}
 	
@@ -82,7 +82,7 @@ public class CorporateCustomerManager implements CorporateCustomerService{
 		
 			return true;
 		}
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.CORPORATECUSTOMERNOTFOUND);
 	}
 	
 }

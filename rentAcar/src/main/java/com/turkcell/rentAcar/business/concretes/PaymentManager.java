@@ -11,12 +11,12 @@ import com.turkcell.rentAcar.business.abstracts.InvoiceService;
 import com.turkcell.rentAcar.business.abstracts.OrderedAdditionalServiceService;
 import com.turkcell.rentAcar.business.abstracts.PaymentService;
 import com.turkcell.rentAcar.business.abstracts.PosService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.payment.GetPaymentDto;
 import com.turkcell.rentAcar.business.dtos.payment.ListPaymentDto;
 import com.turkcell.rentAcar.business.requests.payment.CreatePaymentRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -58,7 +58,7 @@ public class PaymentManager implements PaymentService{
 		
 		this.paymentDao.save(payment);
 		
-		return new SuccessResult("Ödeme başarılı.");
+		return new SuccessResult(Messages.PAYMENTADDED);
 		
 	}
 
@@ -75,7 +75,7 @@ public class PaymentManager implements PaymentService{
 		Payment result = this.paymentDao.getById(paymentId);
 		if (result == null) {
 			
-			return new ErrorDataResult<GetPaymentDto>("Böyle bir id bulunamadı.");
+			throw new BusinessException(Messages.PAYMENTNOTFOUND);
 		}
 		GetPaymentDto response = this.modelMapperService.forDto().map(result, GetPaymentDto.class);
 		return new SuccessDataResult<GetPaymentDto>(response);
@@ -93,7 +93,7 @@ public class PaymentManager implements PaymentService{
 			return true;
 		}
 		
-		throw new BusinessException("Bu kiralamanın ödemesi yapılmıştır.");
+		throw new BusinessException(Messages.PAYMENTBYORDEREDADDITIONALSERVICEEXISTS);
 	}
 	private boolean checkIfInvoiceId(int invoiceId) {
 		
@@ -102,7 +102,7 @@ public class PaymentManager implements PaymentService{
 			return true;
 		}
 		
-		throw new BusinessException("Bu faturanın ödemesi yapılmıştır.");
+		throw new BusinessException(Messages.PAYMENTBYINVOICEEXISTS);
 	}
 	
 	private boolean checkInvoiceIdExist(int invoiceId) {
@@ -111,7 +111,7 @@ public class PaymentManager implements PaymentService{
 		
 			return true;
 		}
-		throw new BusinessException("Böyle bir fatura id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.PAYMENTNOTFOUNDBYINVOICEID);
 	}
 	
 	private boolean checkOrderedAdditionalServiceIdExist(int orderedAdditionalService) {
@@ -120,6 +120,6 @@ public class PaymentManager implements PaymentService{
 		
 			return true;
 		}
-		throw new BusinessException("Böyle bir hizmet id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.PAYMENTNOTFOUNDBYORDEREDADDITIONALSERVICEID);
 	}
 }

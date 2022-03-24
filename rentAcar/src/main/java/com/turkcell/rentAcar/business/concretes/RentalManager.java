@@ -13,6 +13,7 @@ import com.turkcell.rentAcar.business.abstracts.CarService;
 import com.turkcell.rentAcar.business.abstracts.CustomerService;
 import com.turkcell.rentAcar.business.abstracts.OrderedAdditionalServiceService;
 import com.turkcell.rentAcar.business.abstracts.RentalService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.orderedadditionalservice.ListOrderedAdditionalServiceDto;
 import com.turkcell.rentAcar.business.dtos.rental.GetRentalDto;
 import com.turkcell.rentAcar.business.dtos.rental.ListRentalDto;
@@ -21,7 +22,6 @@ import com.turkcell.rentAcar.business.requests.rental.DeleteRentalRequest;
 import com.turkcell.rentAcar.business.requests.rental.UpdateRentalRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -93,7 +93,7 @@ public class RentalManager implements RentalService {
 
 		this.rentalDao.save(rental);
 		
-		return new SuccessResult("Rental.Added");
+		return new SuccessResult(Messages.RENTALADDED);
 	}
 
 	@Override
@@ -103,7 +103,7 @@ public class RentalManager implements RentalService {
 		
 		if (result == null) {
 			
-			return new ErrorDataResult<GetRentalDto>("Böyle bir id bulunamadı.");
+			throw new BusinessException(Messages.RENTALNOTFOUND);
 		}
 		GetRentalDto response = this.modelMapperService.forDto().map(result, GetRentalDto.class);
 		
@@ -120,7 +120,7 @@ public class RentalManager implements RentalService {
 		checkRentalIdExist(rental);
 		
 		this.rentalDao.deleteById(rental.getId());
-		return new SuccessResult("Rental.Deleted");
+		return new SuccessResult(Messages.RENTALDELETED);
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class RentalManager implements RentalService {
 		rental.getCar().setKm(updateRentalRequest.getReturnKm());
 			
 		this.rentalDao.save(rental);
-		return new SuccessResult("Rental.Updated");
+		return new SuccessResult(Messages.RENTALUPDATED);
 
 	}
 
@@ -146,7 +146,7 @@ public class RentalManager implements RentalService {
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.RENTALNOTFOUND);
 	}
 	private boolean checkCarIdExist(int carId) {
 		
@@ -154,7 +154,7 @@ public class RentalManager implements RentalService {
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir araba id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.RENTALNOTFOUNDCAR);
 	}
 
 	private void checkCarMaintenance(int carId){
@@ -165,7 +165,7 @@ public class RentalManager implements RentalService {
 			
 			if (carMaintenance.getReturnDate() == null) {
 			
-				throw new BusinessException("Araba bakımda, kiraya verilemez.");
+				throw new BusinessException(Messages.RENTALINMAINTENANCE);
 			}
 		}
 	}
@@ -178,7 +178,7 @@ public class RentalManager implements RentalService {
 		
 			if (rental.getReturnDate() == null) {
 			
-				throw new BusinessException("Araba kirada, kiraya verilemez.");
+				throw new BusinessException(Messages.RENTALINRENT);
 			}
 		}
 	}
@@ -214,7 +214,7 @@ public class RentalManager implements RentalService {
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir müşteri id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.RENTALNOTFOUNDCUSTOMER);
 	}
 	
 }

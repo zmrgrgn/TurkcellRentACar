@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.turkcell.rentAcar.business.abstracts.CustomerService;
 import com.turkcell.rentAcar.business.abstracts.InvoiceService;
 import com.turkcell.rentAcar.business.abstracts.RentalService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.invoice.GetInvoiceDto;
 import com.turkcell.rentAcar.business.dtos.invoice.ListInvoiceDto;
 import com.turkcell.rentAcar.business.requests.invoice.CreateInvoiceRequest;
@@ -18,7 +19,6 @@ import com.turkcell.rentAcar.business.requests.invoice.DeleteInvoiceRequest;
 import com.turkcell.rentAcar.business.requests.invoice.UpdateInvoiceRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -64,7 +64,7 @@ public class InvoiceManager implements InvoiceService{
 		toSetForAddMethod(invoice,createInvoiceRequest.getRentalId(),createInvoiceRequest.getCustomerId());
 		this.invoiceDao.save(invoice);
 		
-		return new SuccessResult("Invoice.Added");
+		return new SuccessResult(Messages.INVOICEADDED);
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class InvoiceManager implements InvoiceService{
 		
 		if (result == null) {
 			
-			return new ErrorDataResult<GetInvoiceDto>("Böyle bir id bulunamadı.");
+			throw new BusinessException(Messages.INVOICENOTFOUND);
 		}
 		GetInvoiceDto response = this.modelMapperService.forDto().map(result, GetInvoiceDto.class);
 		return new SuccessDataResult<GetInvoiceDto>(response);
@@ -88,7 +88,7 @@ public class InvoiceManager implements InvoiceService{
 		checkInvoiceIdExist(invoice);
 		
 		this.invoiceDao.deleteById(invoice.getId());
-		return new SuccessResult("invoice.Deleted");
+		return new SuccessResult(Messages.INVOICEDELETED);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class InvoiceManager implements InvoiceService{
 		checkInvoiceIdExist(invoice);
 			
 		this.invoiceDao.save(invoice);
-		return new SuccessResult("invoice.Updated");
+		return new SuccessResult(Messages.INVOICEUPDATED);
 	
 	}
 
@@ -109,7 +109,7 @@ public class InvoiceManager implements InvoiceService{
 		var result = this.invoiceDao.findByCreateDateBetween(startDate, finishDate);
 		List<ListInvoiceDto> response = result.stream().map(invoice -> this.modelMapperService.forDto().map(invoice,ListInvoiceDto.class)).collect(Collectors.toList());
 		
-		return new SuccessDataResult<List<ListInvoiceDto>>(response, "Success");
+		return new SuccessDataResult<List<ListInvoiceDto>>(response, Messages.SUCCESS);
 	}
 
 	@Override
@@ -120,7 +120,7 @@ public class InvoiceManager implements InvoiceService{
 		var result = this.invoiceDao.getAllByCustomerId(id);
 		List<ListInvoiceDto> response = result.stream().map(invoice -> this.modelMapperService.forDto().map(invoice,ListInvoiceDto.class)).collect(Collectors.toList());
 		
-		return new SuccessDataResult<List<ListInvoiceDto>>(response, "Success");
+		return new SuccessDataResult<List<ListInvoiceDto>>(response, Messages.SUCCESS);
 	}
 	
 	private boolean checkInvoiceIdExist(Invoice invoice) {
@@ -129,7 +129,7 @@ public class InvoiceManager implements InvoiceService{
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.INVOICENOTFOUND);
 	}
 	
 	private boolean checkInvoiceNoExist(long invoiceNo) {
@@ -138,7 +138,7 @@ public class InvoiceManager implements InvoiceService{
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir fatura numarası var.");
+		throw new BusinessException(Messages.INVOICENOEXISTS);
 	}
 	
 	private boolean checkCustomerIdExist(int customerId) {
@@ -147,7 +147,7 @@ public class InvoiceManager implements InvoiceService{
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir customer id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.INVOICENOTFOUNDBYCUSTOMERID);
 	}
 	
 	private boolean checkRentalIdExist(int rentalId) {
@@ -156,7 +156,7 @@ public class InvoiceManager implements InvoiceService{
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir rental id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.INVOICENOTFOUNDBYRENTALID);
 	}
 	
 	private Invoice toSetForAddMethod(Invoice invoice, int rentalId, int userId) {

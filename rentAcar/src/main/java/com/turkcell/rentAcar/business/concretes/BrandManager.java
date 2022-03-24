@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.BrandService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.brand.GetBrandDto;
 import com.turkcell.rentAcar.business.dtos.brand.ListBrandDto;
 import com.turkcell.rentAcar.business.requests.brand.CreateBrandRequest;
@@ -14,7 +15,6 @@ import com.turkcell.rentAcar.business.requests.brand.DeleteBrandRequest;
 import com.turkcell.rentAcar.business.requests.brand.UpdateBrandRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -47,11 +47,11 @@ public class BrandManager implements BrandService {
 		
 		Brand brand = this.modelMapperService.forRequest().map(createBrandRequest, Brand.class);
 		
-		checkIfBrandName(createBrandRequest.getName());
+		checkIfBrandNameExist(createBrandRequest.getName());
 			
 		this.brandDao.save(brand);
 		
-		return new SuccessResult("Brand.Added");
+		return new SuccessResult(Messages.BRANDADDED);
 	}
 
 	@Override
@@ -60,7 +60,8 @@ public class BrandManager implements BrandService {
 		Brand result = this.brandDao.getBrandById(brandId);
 		
 		if (result == null) {
-			return new ErrorDataResult<GetBrandDto>("Böyle bir id bulunamadı.");
+			
+			throw new BusinessException(Messages.BRANDNOTFOUND);
 		}
 		GetBrandDto response = this.modelMapperService.forDto().map(result, GetBrandDto.class);
 		return new SuccessDataResult<GetBrandDto>(response);
@@ -75,7 +76,7 @@ public class BrandManager implements BrandService {
 		
 		this.brandDao.deleteById(brand.getId());
 		
-		return new SuccessResult("Brand.Deleted");
+		return new SuccessResult(Messages.BRANDDELETED);
 	}
 
 	@Override
@@ -85,22 +86,22 @@ public class BrandManager implements BrandService {
 		
 		checkBrandIdExist(brand);
 		
-		checkIfBrandName(updateBrandRequest.getName());
+		checkIfBrandNameExist(updateBrandRequest.getName());
 		
 		this.brandDao.save(brand);
 		
-		return new SuccessResult("Brand.Updated");
+		return new SuccessResult(Messages.BRANDUPDATED);
 
 	}
 
-	private boolean checkIfBrandName(String brandName) {
+	private boolean checkIfBrandNameExist(String brandName) {
 		
 		if (this.brandDao.getBrandByName(brandName) == null) {
 		
 			return true;
 		}
 		
-		throw new BusinessException("Aynı isimde bir marka bulunmaktadır.");
+		throw new BusinessException(Messages.BRANDEXISTS);
 	}
 
 	private boolean checkBrandIdExist(Brand brand) {
@@ -111,7 +112,7 @@ public class BrandManager implements BrandService {
 		
 		}
 		
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.BRANDNOTFOUND);
 
 	}
 }

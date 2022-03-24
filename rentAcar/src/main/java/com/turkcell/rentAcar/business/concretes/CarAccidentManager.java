@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.CarAccidentService;
 import com.turkcell.rentAcar.business.abstracts.CarService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.caraccident.GetCarAccidentDto;
 import com.turkcell.rentAcar.business.dtos.caraccident.ListCarAccidentDto;
 import com.turkcell.rentAcar.business.requests.caraccident.CreateCarAccidentRequest;
@@ -15,7 +16,6 @@ import com.turkcell.rentAcar.business.requests.caraccident.DeleteCarAccidentRequ
 import com.turkcell.rentAcar.business.requests.caraccident.UpdateCarAccidentRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -31,8 +31,7 @@ public class CarAccidentManager implements CarAccidentService {
 	CarService carService;
 	
 	@Autowired
-	public CarAccidentManager(ModelMapperService modelMapperService, CarAccidentDao carAccidentDao,
-			CarService carService) {
+	public CarAccidentManager(ModelMapperService modelMapperService, CarAccidentDao carAccidentDao, CarService carService) {
 		this.modelMapperService = modelMapperService;
 		this.carAccidentDao = carAccidentDao;
 		this.carService = carService;
@@ -42,32 +41,37 @@ public class CarAccidentManager implements CarAccidentService {
 	public DataResult<List<ListCarAccidentDto>> getAll() {
 		
 		var result = this.carAccidentDao.findAll();
+		
 		List<ListCarAccidentDto> response = result.stream().map(carAccident -> this.modelMapperService.forDto().map(carAccident, ListCarAccidentDto.class)).collect(Collectors.toList());
+		
 		response = toGetAllSetCarId(result, response);
+		
 		return new SuccessDataResult<List<ListCarAccidentDto>>(response);
 	}
 
 	@Override
 	public Result add(CreateCarAccidentRequest createCarAccidentRequest) {
-		checkIfCarAccidentExistByCarId(createCarAccidentRequest.getCarId());//checkifcarexits
+		
+		checkIfCarExist(createCarAccidentRequest.getCarId());
 		
 		CarAccident carAccident = this.modelMapperService.forRequest().map(createCarAccidentRequest, CarAccident.class);
 		
 		this.carAccidentDao.save(carAccident);
 		
-		return new SuccessResult("CarAccident.Added");
+		return new SuccessResult(Messages.CARACCIDENTADDED);
 	}
 
 
 	@Override
 	public Result delete(DeleteCarAccidentRequest deleteCarAccidentRequest) {
+		
 		CarAccident carAccident = this.modelMapperService.forRequest().map(deleteCarAccidentRequest, CarAccident.class);
 		
 		checkCarAccidentIdExist(carAccident);
 		
 		this.carAccidentDao.deleteById(carAccident.getId());
 		
-		return new SuccessResult("carAccident.Deleted");
+		return new SuccessResult(Messages.CARACCIDENTDELETED);
 		
 	}
 
@@ -80,16 +84,18 @@ public class CarAccidentManager implements CarAccidentService {
 		
 		this.carAccidentDao.save(carAccident);
 		
-		return new SuccessResult("carAccident.Updated");
+		return new SuccessResult(Messages.CARACCIDENTUPDATED);
 		
 	}
 	
 	@Override
 	public DataResult<GetCarAccidentDto> getById(int id) {
-		CarAccident result = this.carAccidentDao.getById(id);
-		if (result == null) {
 		
-			return new ErrorDataResult<GetCarAccidentDto>("Böyle bir id bulunamadı.");//business exceptiona çevir
+		CarAccident result = this.carAccidentDao.getById(id);
+		
+		if (result == null) {
+			
+			throw new BusinessException(Messages.CARACCIDENTNOTFOUND);
 		}
 		
 		GetCarAccidentDto response = this.modelMapperService.forDto().map(result, GetCarAccidentDto.class);
@@ -98,7 +104,7 @@ public class CarAccidentManager implements CarAccidentService {
 	
 	@Override
 	public DataResult<List<ListCarAccidentDto>> getAllByCarId(int carId) {
-		checkIfCarAccidentExistByCarId(carId);
+		checkIfCarExist(carId);
 		
 		var result = this.carAccidentDao.getAllByCarId(carId);
 
@@ -116,22 +122,24 @@ public class CarAccidentManager implements CarAccidentService {
 			return true;
 		}
 		
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.CARACCIDENTNOTFOUND);
 
 	}
 
-	private boolean checkIfCarAccidentExistByCarId(int carId) {
+	private boolean checkIfCarExist(int carId) {
 		
 		if(this.carService.getById(carId).getData() != null) {
 		
 			return true;
 		}
 		
-		throw new BusinessException("Böyle bir araba id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.CARACCIDENTCARIDNOTFOUND);
 	}
 	
 	private List<ListCarAccidentDto> toGetAllSetCarId(List<CarAccident> result,List<ListCarAccidentDto> response) {
+		
 		for(int i = 0; i < result.size() ; i++) {
+		
 			response.get(i).setCarId(result.get(i).getCar().getId());		
 		}
 		return response;

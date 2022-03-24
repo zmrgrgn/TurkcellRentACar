@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.turkcell.rentAcar.business.abstracts.AdditionalServiceService;
 import com.turkcell.rentAcar.business.abstracts.OrderedAdditionalServiceService;
 import com.turkcell.rentAcar.business.abstracts.RentalService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.orderedadditionalservice.GetOrderedAdditionalServiceDto;
 import com.turkcell.rentAcar.business.dtos.orderedadditionalservice.ListOrderedAdditionalServiceDto;
 import com.turkcell.rentAcar.business.requests.orderedadditionalservice.CreateOrderedAdditionalServiceRequest;
@@ -16,7 +17,6 @@ import com.turkcell.rentAcar.business.requests.orderedadditionalservice.DeleteOr
 import com.turkcell.rentAcar.business.requests.orderedadditionalservice.UpdateOrderedAdditionalServiceRequest;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.Result;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.results.SuccessResult;
@@ -60,7 +60,7 @@ public class OrderedAdditionalServiceManager implements OrderedAdditionalService
 		checkRentalIdExist(createOrderedAdditionalServiceRequest.getRentalId());
 		
 		this.orderedAdditionalServiceDao.save(orderedAdditionalService);
-		return new SuccessResult("OrderedAdditionalService.Added");
+		return new SuccessResult(Messages.ORDEREDADDITIONALSERVICEADDED);
 	}
 
 	@Override
@@ -70,7 +70,7 @@ public class OrderedAdditionalServiceManager implements OrderedAdditionalService
 		
 		if (result == null) {
 			
-			return new ErrorDataResult<GetOrderedAdditionalServiceDto>("Böyle bir id bulunamadı.");
+			throw new BusinessException(Messages.ORDEREDADDITIONALSERVICENOTFOUND);
 		}
 		GetOrderedAdditionalServiceDto response = this.modelMapperService.forDto().map(result, GetOrderedAdditionalServiceDto.class);
 		return new SuccessDataResult<GetOrderedAdditionalServiceDto>(response);
@@ -84,7 +84,7 @@ public class OrderedAdditionalServiceManager implements OrderedAdditionalService
 		checkOrderedAdditionalServiceIdExist(orderedAdditionalService);
 		
 		this.orderedAdditionalServiceDao.deleteById(orderedAdditionalService.getId());	
-		return new SuccessResult("OrderedAdditionalService.Deleted");
+		return new SuccessResult(Messages.ORDEREDADDITIONALSERVICEDELETED);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class OrderedAdditionalServiceManager implements OrderedAdditionalService
 		checkOrderedAdditionalServiceIdExist(orderedAdditionalService);	
 	
 		this.orderedAdditionalServiceDao.save(orderedAdditionalService);
-		return new SuccessResult("orderedAdditionalService.Updated");
+		return new SuccessResult(Messages.ORDEREDADDITIONALSERVICEUPDATED);
 	}
 
 	@Override
@@ -127,10 +127,12 @@ public class OrderedAdditionalServiceManager implements OrderedAdditionalService
 	}
 	
 	private boolean checkOrderedAdditionalServiceIdExist(OrderedAdditionalService orderedAdditionalService) {
+		
 		if(this.orderedAdditionalServiceDao.getOrderedAdditionalServiceById(orderedAdditionalService.getId()) != null) {
+		
 			return true;
 		}
-		throw new BusinessException("Böyle bir id bulunmamaktadır.");
+		throw new BusinessException(Messages.ORDEREDADDITIONALSERVICENOTFOUND);
 	}
 	private boolean checkAdditionalServiceIdExist(int additionalServiceId) {
 		
@@ -138,7 +140,7 @@ public class OrderedAdditionalServiceManager implements OrderedAdditionalService
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir additional service id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.ORDEREDADDITIONALSERVICEADDITIONALSERVİCEIDNOTFOUND);
 	}
 	
 	private boolean checkRentalIdExist(int rentalId) {
@@ -147,7 +149,7 @@ public class OrderedAdditionalServiceManager implements OrderedAdditionalService
 			
 			return true;
 		}
-		throw new BusinessException("Böyle bir rental id'si bulunmamaktadır.");
+		throw new BusinessException(Messages.ORDEREDADDITIONALSERVICERENTALIDNOTFOUND);
 	}
 
 

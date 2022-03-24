@@ -3,10 +3,10 @@ package com.turkcell.rentAcar.business.concretes;
 import org.springframework.stereotype.Service;
 
 import com.turkcell.rentAcar.business.abstracts.CustomerService;
+import com.turkcell.rentAcar.business.constants.Messages;
 import com.turkcell.rentAcar.business.dtos.customer.GetCustomerDto;
 import com.turkcell.rentAcar.core.exception.BusinessException;
 import com.turkcell.rentAcar.core.results.DataResult;
-import com.turkcell.rentAcar.core.results.ErrorDataResult;
 import com.turkcell.rentAcar.core.results.SuccessDataResult;
 import com.turkcell.rentAcar.core.utilities.mapping.ModelMapperService;
 import com.turkcell.rentAcar.dataAccess.abstracts.CustomerDao;
@@ -29,7 +29,7 @@ public class CustomerManager implements CustomerService{
 		Customer result = this.customerDao.getById(customerId);
 		
 		if (result == null) {
-			return new ErrorDataResult<GetCustomerDto>("Böyle bir id bulunamadı.");
+			throw new BusinessException(Messages.CUSTOMERNOTFOUND);
 		}
 		GetCustomerDto response = this.modelMapperService.forDto().map(result, GetCustomerDto.class);
 		checkIfEmail(response.getEmail());
@@ -43,6 +43,6 @@ public class CustomerManager implements CustomerService{
 			return true;
 		}
 		
-		throw new BusinessException("Aynı email bulunmaktadır.");
+		throw new BusinessException(Messages.CUSTOMERMAILEXISTS);
 	}
 }
