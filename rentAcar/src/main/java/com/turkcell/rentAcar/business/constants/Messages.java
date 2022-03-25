@@ -90,4 +90,7 @@ public class Messages {
 	public static final String PAYMENTNOTFOUNDBYORDEREDADDITIONALSERVICEID = "Cannot find a ordered additional service with this Id";
 	public static final String PAYMENTBYINVOICEEXISTS = "Such a invoice exists";
 	public static final String PAYMENTBYORDEREDADDITIONALSERVICEEXISTS = "Such a ordered additional service exists";
+
+	public static final String CREDITCARDADDED = "CreditCard.Added";
+	public static final String CREDITCARDNOTFOUND = "Cannot find a credit card with this Id";
 }

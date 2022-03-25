@@ -32,7 +32,7 @@ public class CustomerManager implements CustomerService{
 			throw new BusinessException(Messages.CUSTOMERNOTFOUND);
 		}
 		GetCustomerDto response = this.modelMapperService.forDto().map(result, GetCustomerDto.class);
-		checkIfEmail(response.getEmail());
+		//checkIfEmail(response.getEmail());
 		return new SuccessDataResult<GetCustomerDto>(response, "Success");
 	}
 	

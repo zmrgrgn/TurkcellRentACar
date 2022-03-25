@@ -9,7 +9,7 @@ import com.turkcell.rentAcar.core.results.DataResult;
 import com.turkcell.rentAcar.core.results.Result;
 
 public interface PaymentService {
-	public Result add(CreatePaymentRequest createPaymentRequest);
+	public Result add(boolean rememberMe, CreatePaymentRequest createPaymentRequest);
 	DataResult<List<ListPaymentDto>> getAll();
 	DataResult<GetPaymentDto> getById(int paymentId);
 }

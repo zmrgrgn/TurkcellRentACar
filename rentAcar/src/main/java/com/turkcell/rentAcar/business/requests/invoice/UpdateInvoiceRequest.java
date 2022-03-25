@@ -18,5 +18,8 @@ public class UpdateInvoiceRequest {
 	private int id;
 	@NotNull
 	private LocalDate createDate;
+	@NotNull
+	@Positive
+	private int rentalId;
 
 }

@@ -14,7 +14,7 @@ public class FakeIsBankServiceAdapter implements PosService{
 	@Override
 	public Result payment(CreatePaymentRequest createPaymentRequest) {
 		FakeIsBankManager fakeIsBankManager=new FakeIsBankManager();
-		return fakeIsBankManager.makePayment( createPaymentRequest.getCardOwnerName(), createPaymentRequest.getCardNumber(),createPaymentRequest.getCardCvvNumber());
+		return fakeIsBankManager.makePayment( createPaymentRequest.getCreateCreditCardRequest().getCardOwnerName(), createPaymentRequest.getCreateCreditCardRequest().getCardNumber(),createPaymentRequest.getCreateCreditCardRequest().getCardCvvNumber());
 		
 	}
 

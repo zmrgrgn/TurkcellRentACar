@@ -151,6 +151,6 @@ public class OrderedAdditionalServiceManager implements OrderedAdditionalService
 		}
 		throw new BusinessException(Messages.ORDEREDADDITIONALSERVICERENTALIDNOTFOUND);
 	}
-
+	
 
 }

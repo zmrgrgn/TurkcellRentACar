@@ -14,7 +14,7 @@ public class FakeHalkBankServiceAdapter implements PosService{
 	@Override
 	public Result payment(CreatePaymentRequest createPaymentRequest) {
 		FakeHalkBankManager fakeHalkBankManager=new FakeHalkBankManager();
-		return fakeHalkBankManager.odemeYap(createPaymentRequest.getCardCvvNumber(), createPaymentRequest.getCardOwnerName(), createPaymentRequest.getCardNumber());
+		return fakeHalkBankManager.odemeYap(createPaymentRequest.getCreateCreditCardRequest().getCardCvvNumber(), createPaymentRequest.getCreateCreditCardRequest().getCardOwnerName(), createPaymentRequest.getCreateCreditCardRequest().getCardNumber());
 		
 	}
 

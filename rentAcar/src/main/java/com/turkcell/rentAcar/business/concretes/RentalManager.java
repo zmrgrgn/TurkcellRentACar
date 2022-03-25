@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import com.turkcell.rentAcar.business.abstracts.AdditionalServiceService;
 import com.turkcell.rentAcar.business.abstracts.CarService;
 import com.turkcell.rentAcar.business.abstracts.CustomerService;
+import com.turkcell.rentAcar.business.abstracts.InvoiceService;
 import com.turkcell.rentAcar.business.abstracts.OrderedAdditionalServiceService;
 import com.turkcell.rentAcar.business.abstracts.RentalService;
 import com.turkcell.rentAcar.business.constants.Messages;
@@ -40,9 +41,10 @@ public class RentalManager implements RentalService {
 	private CustomerService customerService;
 	private AdditionalServiceService additionalServiceService;
 	private OrderedAdditionalServiceService orderedAdditionalServiceService;
+	private InvoiceService invoiceService;
 	
 	@Autowired
-	public RentalManager(RentalDao rentalDao, ModelMapperService modelMapperService, CarMaintenanceDao carMaintenanceDao, CarService carService, CustomerService customerService,@Lazy OrderedAdditionalServiceService orderedAdditionalServiceService, AdditionalServiceService additionalServiceService) {
+	public RentalManager(RentalDao rentalDao, ModelMapperService modelMapperService, CarMaintenanceDao carMaintenanceDao, CarService carService, CustomerService customerService,@Lazy OrderedAdditionalServiceService orderedAdditionalServiceService, AdditionalServiceService additionalServiceService,InvoiceService invoiceService) {
 		this.rentalDao = rentalDao;
 		this.modelMapperService = modelMapperService;
 		this.carMaintenanceDao = carMaintenanceDao;
@@ -50,6 +52,7 @@ public class RentalManager implements RentalService {
 		this.customerService=customerService;
 		this.additionalServiceService = additionalServiceService;
 		this.orderedAdditionalServiceService = orderedAdditionalServiceService;
+		this.invoiceService=invoiceService;
 	}
 
 	@Override
@@ -87,10 +90,12 @@ public class RentalManager implements RentalService {
 		
 		Rental rental = this.modelMapperService.forRequest().map(createRentalRequest, Rental.class);
 		
-		rental.setId(0);
-		
 		rental.setRentKm(this.carService.getById(createRentalRequest.getCarId()).getData().getKm());
 
+		this.rentalDao.save(rental);
+		
+		rental.setTotalPrice(rentalCalculation(rental));
+		
 		this.rentalDao.save(rental);
 		
 		return new SuccessResult(Messages.RENTALADDED);
@@ -129,12 +134,12 @@ public class RentalManager implements RentalService {
 		checkCarMaintenance(updateRentalRequest.getId());
 		
 		Rental rental = this.rentalDao.getRentalById(id);
-		
 		checkRentalIdExist(rental);
-		rental.setTotalPrice(rentalCalculation(rental));
+		
 		rental.setReturnKm(updateRentalRequest.getReturnKm());
 		rental.getCar().setKm(updateRentalRequest.getReturnKm());
 			
+		rental.setTotalPrice(updateRentalCalculation(rental, updateRentalRequest)+rental.getTotalPrice()+updateOrderedAdditionalCalculation(rental));
 		this.rentalDao.save(rental);
 		return new SuccessResult(Messages.RENTALUPDATED);
 
@@ -148,6 +153,7 @@ public class RentalManager implements RentalService {
 		}
 		throw new BusinessException(Messages.RENTALNOTFOUND);
 	}
+	
 	private boolean checkCarIdExist(int carId) {
 		
 		if(this.carService.getById(carId).getData() != null) {
@@ -183,31 +189,55 @@ public class RentalManager implements RentalService {
 		}
 	}
 	
-	private double rentalCalculation(Rental rental) throws BusinessException {
+	private double rentalCalculation(Rental rental){
 		
 		double totalPrice = 0;
-		
-		List<ListOrderedAdditionalServiceDto> orderedAdditionalServiceDtos = orderedAdditionalServiceService.getAllByRentalId(rental.getId()).getData();
-		
-		if(orderedAdditionalServiceDtos.size() > 0) {
-			for(ListOrderedAdditionalServiceDto orderedAdditionalServiceDto : orderedAdditionalServiceDtos) {
-				totalPrice += additionalServiceService.getById(orderedAdditionalServiceDto.getAdditionalServiceId()).getData().getPrice(); 
-			}	
-		}
 		
 		if(rental.getRentCity().getId() != rental.getReturnCity().getId())
 			totalPrice += 750;
 
-		long days = ChronoUnit.DAYS.between(rental.getRentDate(), rental.getReturnDate());
+		long days = ChronoUnit.DAYS.between(rental.getRentDate(), rental.getReturnDate())+1;
 		
 		if(days == 0)
 			days = 1;
 		
 		totalPrice += days * carService.getById(rental.getCar().getId()).getData().getDailyPrice();
-
 		return totalPrice;
 	}
 
+	private double updateRentalCalculation(Rental rental, UpdateRentalRequest updateRentalRequest) {
+		
+		double totalPrice=0;
+		
+		if(rental.getReturnDate()!=updateRentalRequest.getReturnDate()) {
+			
+			long days = ChronoUnit.DAYS.between(rental.getReturnDate(), updateRentalRequest.getReturnDate());
+			
+			totalPrice += days * carService.getById(rental.getCar().getId()).getData().getDailyPrice();
+			
+			if(rental.getReturnCity().getId() != updateRentalRequest.getReturnCityId())
+				totalPrice += 750;
+		}
+		return totalPrice;
+	}
+	
+	private double updateOrderedAdditionalCalculation(Rental rental) {
+		
+		double totalPrice=0;
+	
+			List<ListOrderedAdditionalServiceDto> orderedAdditionalServiceDtos = orderedAdditionalServiceService.getAllByRentalId(rental.getId()).getData();
+			
+			if(orderedAdditionalServiceDtos.size() > 0) {
+				for(ListOrderedAdditionalServiceDto orderedAdditionalServiceDto : orderedAdditionalServiceDtos) {
+					totalPrice += additionalServiceService.getById(orderedAdditionalServiceDto.getAdditionalServiceId()).getData().getPrice(); 
+				}	
+			}
+			long days = ChronoUnit.DAYS.between(rental.getRentDate(),rental.getReturnDate());
+			
+			totalPrice += days * carService.getById(rental.getCar().getId()).getData().getDailyPrice();
+			return totalPrice;
+	}
+	
 	private boolean checkCustomerIdExist(int customerId) {
 		
 		if(this.customerService.getById(customerId).getData() != null) {

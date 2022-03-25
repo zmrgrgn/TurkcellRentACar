@@ -50,8 +50,8 @@ public class Invoice {
     @JoinColumn(name = "customer_id")
     private Customer customer; 
     
-    @OneToOne
-    @JoinColumn(name = "rental_id")
+    @ManyToOne
+    @JoinColumn(name="rental_id")
     private Rental rental; 
 	
 	@OneToOne(mappedBy = "invoice")
