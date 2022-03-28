@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import com.turkcell.rentAcar.business.abstracts.AdditionalServiceService;
 import com.turkcell.rentAcar.business.abstracts.CarService;
 import com.turkcell.rentAcar.business.abstracts.CustomerService;
-import com.turkcell.rentAcar.business.abstracts.InvoiceService;
 import com.turkcell.rentAcar.business.abstracts.OrderedAdditionalServiceService;
 import com.turkcell.rentAcar.business.abstracts.RentalService;
 import com.turkcell.rentAcar.business.constants.Messages;
@@ -41,10 +40,9 @@ public class RentalManager implements RentalService {
 	private CustomerService customerService;
 	private AdditionalServiceService additionalServiceService;
 	private OrderedAdditionalServiceService orderedAdditionalServiceService;
-	private InvoiceService invoiceService;
 	
 	@Autowired
-	public RentalManager(RentalDao rentalDao, ModelMapperService modelMapperService, CarMaintenanceDao carMaintenanceDao, CarService carService, CustomerService customerService,@Lazy OrderedAdditionalServiceService orderedAdditionalServiceService, AdditionalServiceService additionalServiceService,InvoiceService invoiceService) {
+	public RentalManager(RentalDao rentalDao, ModelMapperService modelMapperService, CarMaintenanceDao carMaintenanceDao, CarService carService, CustomerService customerService,@Lazy OrderedAdditionalServiceService orderedAdditionalServiceService, AdditionalServiceService additionalServiceService) {
 		this.rentalDao = rentalDao;
 		this.modelMapperService = modelMapperService;
 		this.carMaintenanceDao = carMaintenanceDao;
@@ -52,7 +50,7 @@ public class RentalManager implements RentalService {
 		this.customerService=customerService;
 		this.additionalServiceService = additionalServiceService;
 		this.orderedAdditionalServiceService = orderedAdditionalServiceService;
-		this.invoiceService=invoiceService;
+		
 	}
 
 	@Override
